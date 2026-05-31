@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Sentence is long (%s words). Aim for under 25 for readability."
+level: warning
+scope: sentence
+ignorecase: false
+max: 25
+token: '\b\w+\b'

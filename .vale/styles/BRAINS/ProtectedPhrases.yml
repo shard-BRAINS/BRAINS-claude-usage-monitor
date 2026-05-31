@@ -1,0 +1,24 @@
+extends: existence
+message: "Protected BRAINS phrase appears mangled — use the exact form or rewrite the sentence. Match: '%s'."
+level: error
+ignorecase: true
+nonword: false
+tokens:
+  # "The global benchmark for neuro-affirming AI" — mangled variants
+  - 'the\s+global\s+benchmark\s+for\s+(?!neuro-affirming\s+AI\b)[A-Za-z][A-Za-z\-]+\s+AI'
+  - 'global\s+benchmark\s+for\s+neuro\s+affirming\s+AI'
+  - 'global\s+benchmark\s+for\s+neuroaffirming\s+AI'
+  # "Built by neurodivergent minds, for neurodivergent people" — mangled variants
+  - 'built\s+by\s+neurodivergent\s+(?!minds,\s+for\s+neurodivergent\s+people\b)[A-Za-z]+,?\s+for\s+(?:the\s+)?neurodivergent'
+  - 'built\s+by\s+and\s+for\s+neurodivergent'
+  - 'by\s+ND\s+minds[,\s]+for\s+ND'
+  # "Reliable, affirming, inclusive" — mangled order
+  - 'inclusive,\s+affirming,\s+reliable'
+  - 'affirming,\s+reliable,\s+inclusive'
+  - 'reliable\s+affirming\s+and\s+inclusive(?!\s)'
+  # "Because every mind matters" — paraphrases
+  - 'because\s+every\s+(?:brain|person|individual)\s+matters'
+  - 'every\s+brain\s+matters'
+  # "AI that works for every mind" — paraphrases
+  - 'AI\s+that\s+works\s+for\s+every\s+(?:brain|person|user)'
+  - 'AI\s+for\s+every\s+(?:brain|user|person)'

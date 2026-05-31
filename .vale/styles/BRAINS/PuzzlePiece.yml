@@ -1,0 +1,13 @@
+extends: existence
+message: "Puzzle-piece imagery is harmful in autism contexts and is banned in BRAINS copy. Match: '%s'."
+level: error
+ignorecase: true
+nonword: false
+tokens:
+  - 'puzzle\s+piece'
+  - 'puzzle\s+pieces'
+  - 'missing\s+piece\s+of\s+the\s+puzzle'
+  - 'piece\s+of\s+the\s+puzzle'
+  - 'completing\s+the\s+puzzle'
+  - 'puzzle[-\s]piece\s+(?:icon|image|graphic|logo)'
+  - 'puzzle\s+(?:ribbon|symbol|imagery)'

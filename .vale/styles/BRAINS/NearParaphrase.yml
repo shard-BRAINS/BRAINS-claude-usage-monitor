@@ -1,0 +1,16 @@
+extends: existence
+message: "Near-paraphrase of the BRAINS positioning — either use the exact protected phrase or change direction entirely. Match: '%s'."
+level: error
+ignorecase: true
+nonword: false
+tokens:
+  - 'benchmark\s+for\s+neuroinclusive\s+AI'
+  - 'benchmark\s+for\s+inclusive\s+AI'
+  - 'benchmark\s+for\s+neurodiverse\s+AI'
+  - 'standard\s+for\s+neuro-affirming\s+AI'
+  - 'standard\s+for\s+neurodivergent\s+AI'
+  - 'gold\s+standard\s+for\s+neuro'
+  - 'certification\s+for\s+inclusive\s+AI'
+  - 'AI\s+designed\s+for\s+(?:all\s+)?brains'
+  - 'AI\s+for\s+(?:all|every)\s+kind\s+of\s+mind'
+  - 'AI\s+for\s+neurodivergent\s+brains'

@@ -1,0 +1,12 @@
+extends: existence
+message: "Use 'BRAINS' (all caps) — found '%s'."
+level: error
+nonword: false
+tokens:
+  - '\bBrains\b'
+  - '\bBRAINs\b'
+  - '\bbRAINS\b'
+  - '\bbrains certified\b'
+  - '\bBrains Certified\b'
+  - '\bBrains Trust\b'
+  - '\bBrains Incubator\b'

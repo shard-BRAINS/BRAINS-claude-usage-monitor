@@ -1,8 +1,10 @@
-# BRAINs Claude Usage Monitor
+# BRAINS Claude Usage Monitor
 
-A VSCode extension that shows how many tokens your Claude Code chat has used, so you know when to start a fresh session before you hit a context or plan limit. Published by **BRAINs Certified**.
+A VSCode extension that shows how many tokens your Claude Code chat has used, so you know when to start a fresh session before you hit a context or plan limit. Published by **BRAINS Certified**.
 
 [![CI](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/shard-BRAINS/BRAINS-claude-usage-monitor/badge)](https://scorecard.dev/viewer/?uri=github.com/shard-BRAINS/BRAINS-claude-usage-monitor)
+[![License: MIT](https://img.shields.io/badge/License-MIT-D99518.svg)](LICENSE)
 
 ---
 
@@ -27,15 +29,15 @@ A VSCode extension that shows how many tokens your Claude Code chat has used, so
 **From the VSCode Marketplace** (once live):
 
 ```
-code --install-extension BRAINs-Certified.BRAINs-claude-usage-monitor
+code --install-extension BRAINS-Certified.BRAINS-claude-usage-monitor
 ```
 
-Or search **"BRAINs Claude Usage Monitor"** in the VSCode Extensions sidebar.
+Or search **"BRAINS Claude Usage Monitor"** in the VSCode Extensions sidebar.
 
 **From the GitHub release** (always available): download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
 
 ```
-code --install-extension BRAINs-claude-usage-monitor-0.1.0.vsix
+code --install-extension BRAINS-claude-usage-monitor-0.1.0.vsix
 ```
 
 Reload the VSCode window to activate. The extension lights up on startup and watches `~/.claude/projects/` automatically.
@@ -45,7 +47,7 @@ Reload the VSCode window to activate. The extension lights up on startup and wat
 ```
 npm install
 npm run package
-code --install-extension BRAINs-claude-usage-monitor-0.1.0.vsix --force
+code --install-extension BRAINS-claude-usage-monitor-0.1.0.vsix --force
 ```
 
 ## Settings
@@ -116,11 +118,23 @@ For manual verification steps, see [test/e2e/MANUAL_CHECKS.md](test/e2e/MANUAL_C
 
 The `assets/icon.png` shipped with this version is a 1×1 placeholder. A proper 128×128 icon will land before any VSCode Marketplace publish.
 
+## Security
+
+Vulnerabilities should be reported via GitHub Security Advisories on this repo, or to **security@brainscertified.com**. See [SECURITY.md](SECURITY.md) for the full policy.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). The repo runs OpenSSF Scorecard, CodeQL, Trivy, Gitleaks, Dependabot, Vale (BRAINS prose rules), and a readability gate on every pull request — these are the BRAINS standard floor for any BRAINS-branded repository.
+
 ## About this project
 
-Claude Usage Monitor is a [BRAINS Incubator](https://brainscertified.com) project — one of the tools BRAINS uses internally to keep our own Claude Code work observable and accountable. It was the first end-to-end build run through the [BRAINS Build Platform](https://github.com/shard-BRAINS/BRAINS-build-platform), so the seventeen work packages, decisions log, and persona dispatch trail that produced it are part of the platform's dogfood history.
+BRAINS Claude Usage Monitor is a [BRAINS Incubator](https://brainscertified.com) project — one of the tools BRAINS uses internally to keep our own Claude Code work observable and accountable. It was the first end-to-end build run through the [BRAINS Build Platform](https://github.com/shard-BRAINS/BRAINS-build-platform), so the seventeen work packages, decisions log, and persona dispatch trail that produced it are part of the platform's dogfood history.
 
 BRAINS is the global benchmark for neuro-affirming AI. We publish tools, research, and certifications under the principle that AI should work for every mind — including the engineers who build it. Issues, suggestions, and pull requests are welcome.
+
+Reliable, affirming, inclusive.
+
+— Built by neurodivergent minds, for neurodivergent people.
 
 ## License
 
