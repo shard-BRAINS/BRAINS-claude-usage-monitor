@@ -4,12 +4,12 @@
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/shard-BRAINS/.github/main/profile/brand-mark-dark-bg.png">
   <img alt="BRAINS" src="https://raw.githubusercontent.com/shard-BRAINS/.github/main/profile/brand-mark-light-bg.png" width="220">
 </picture>
-=======
+
 <!-- readability: skip -->
 
 # BRAINS Claude Usage Monitor
 
-### Know how many tokens your Claude Code chat has used — before you hit a limit.
+**Know how many tokens your Claude Code chat has used — before you hit a limit.**
 
 <br />
 
