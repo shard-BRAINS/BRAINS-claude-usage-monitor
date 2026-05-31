@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "outDir": "./",
+    "rootDir": "./",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "types": ["mocha", "node"]
+  },
+  "files": ["runner.ts", "smoke.test.ts"]
+}

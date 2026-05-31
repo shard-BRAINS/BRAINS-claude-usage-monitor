@@ -1,0 +1,151 @@
+{
+  "name": "claude-usage-monitor",
+  "displayName": "Claude Usage Monitor",
+  "description": "Surfaces Claude Code conversation token usage in VSCode — per-window scoped status bar, sidebar breakdown, rich hover card, and a configurable nudge when thresholds are crossed.",
+  "version": "0.0.7",
+  "publisher": "brains-build",
+  "license": "MIT",
+  "icon": "assets/icon.png",
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "claude",
+    "anthropic",
+    "tokens",
+    "usage",
+    "monitor"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor.git"
+  },
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=20"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "claudeUsageMonitor",
+          "title": "Claude Usage",
+          "icon": "assets/sidebar-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "claudeUsageMonitor": [
+        {
+          "id": "claudeUsageMonitor.view",
+          "name": "Token usage",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Claude Usage Monitor",
+      "properties": {
+        "claudeUsageMonitor.warningTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "description": "Token total at which the status bar turns yellow."
+        },
+        "claudeUsageMonitor.criticalTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 160000,
+          "description": "Token total at which the status bar turns red. Nudge behaviour is configured separately via claudeUsageMonitor.nudge.mode."
+        },
+        "claudeUsageMonitor.nudge.mode": {
+          "type": "string",
+          "enum": ["off", "once-per-session", "on-warning", "on-critical", "on-each"],
+          "default": "once-per-session",
+          "description": "When to show the start-fresh-chat nudge. once-per-session = at most one per session; on-warning/on-critical = each time threshold crosses upward; on-each = every change event past minInterval; off = never.",
+          "enumDescriptions": [
+            "Never show the nudge.",
+            "Show at most one nudge per session, when the critical threshold is first crossed.",
+            "Show a nudge each time the warning threshold is crossed upward.",
+            "Show a nudge each time the critical threshold is crossed upward.",
+            "Show a nudge on every change event where total >= warning, subject to minInterval."
+          ]
+        },
+        "claudeUsageMonitor.nudge.minIntervalMinutes": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 30,
+          "description": "Minimum minutes between repeat nudges for the same session in on-warning/on-critical/on-each modes. 0 disables the gap."
+        },
+        "claudeUsageMonitor.nudge.suppressedSessions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Session ids the user has asked not to be nudged again about. Add via the Snooze action on the notification."
+        },
+        "claudeUsageMonitor.limits.sessionTokens": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "default": null,
+          "description": "Total tokens allowed in the rolling session window. Set to null to hide percentage display."
+        },
+        "claudeUsageMonitor.limits.weeklyTokens": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "default": null,
+          "description": "Total tokens allowed in the rolling weekly window. Set to null to hide percentage display."
+        },
+        "claudeUsageMonitor.limits.sessionWindowHours": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 5,
+          "description": "Rolling-session window length in hours (Claude.ai uses 5)."
+        },
+        "claudeUsageMonitor.limits.weeklyWindowDays": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 7,
+          "description": "Rolling-weekly window length in days."
+        },
+        "claudeUsageMonitor.refreshIntervalSeconds": {
+          "type": "integer",
+          "minimum": 5,
+          "default": 30,
+          "description": "How often the hover card and sidebar refresh wall-clock fields (reset countdowns, 'X ago' timestamps) when no Claude conversation activity is happening. Minimum 5 seconds."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "lint": "eslint src --ext .ts",
+    "test": "vitest run",
+    "test:e2e": "tsc -p test/e2e/tsconfig.json && node test/e2e/runner.js",
+    "package": "npm run build && vsce package --no-yarn --no-dependencies",
+    "package:check": "node scripts/check-vsix-size.mjs",
+    "vscode:prepublish": "node esbuild.config.mjs --production"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^2.24.0",
+    "esbuild": "^0.20.0",
+    "eslint": "^8.57.0",
+    "mocha": "^11.7.6",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0"
+  }
+}

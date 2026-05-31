@@ -1,0 +1,20 @@
+{
+  "session-a": {
+    "input": 3000,
+    "output": 1300,
+    "cacheCreate": 200,
+    "cacheRead": 1800,
+    "total": 4730,
+    "lastTurnInput": 2000,
+    "lastTurnOutput": 800
+  },
+  "session-b": {
+    "input": 2000,
+    "output": 950,
+    "cacheCreate": 400,
+    "cacheRead": 1000,
+    "total": 3550,
+    "lastTurnInput": 1500,
+    "lastTurnOutput": 700
+  }
+}

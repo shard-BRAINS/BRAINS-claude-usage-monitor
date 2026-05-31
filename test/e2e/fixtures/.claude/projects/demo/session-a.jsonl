@@ -1,0 +1,2 @@
+{"type":"user","message":{"role":"user","content":"Hello"},"timestamp":"2024-01-01T00:00:00.000Z"}
+{"type":"assistant","message":{"role":"assistant","content":"Hi there!","usage":{"input_tokens":1000,"output_tokens":500,"cache_creation_input_tokens":0,"cache_read_input_tokens":200}},"timestamp":"2024-01-01T00:00:01.000Z"}

@@ -1,0 +1,3 @@
+{"type":"user","message":{"role":"user","content":"Hello, can you help me?"},"uuid":"u1","timestamp":"2026-05-29T00:00:00.000Z"}
+{"type":"assistant","message":{"role":"assistant","content":"Sure!","usage":{"input_tokens":1000,"output_tokens":500,"cache_creation_input_tokens":200,"cache_read_input_tokens":300}},"uuid":"a1","timestamp":"2026-05-29T00:00:00.000Z"}
+{"type":"assistant","message":{"role":"assistant","content":"Here is more.","usage":{"input_tokens":2000,"output_tokens":800,"cache_creation_input_tokens":0,"cache_read_input_tokens":1500}},"uuid":"a2","timestamp":"2026-05-29T05:00:00.000Z"}

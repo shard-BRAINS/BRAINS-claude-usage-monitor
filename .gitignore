@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.vsix
+.vscode-test/
+coverage/
+.DS_Store
+
+# BRAINS Build Platform run state — not source, excluded from public repo
+.brains-build/
+
+# Workspace / IDE
+.vscode/
+*.code-workspace
+
+# Stray build-tooling stdout dumps
+package-output.txt
