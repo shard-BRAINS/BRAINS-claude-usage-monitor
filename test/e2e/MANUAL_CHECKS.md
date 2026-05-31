@@ -7,7 +7,7 @@ no programmatic way to trigger a notification assert).
 ## 1 — Install the VSIX
 
 ```
-code --install-extension claude-usage-monitor-0.0.1.vsix
+code --install-extension BRAINs-claude-usage-monitor-0.1.0.vsix
 ```
 
 Restart VSCode when prompted.

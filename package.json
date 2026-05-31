@@ -1,8 +1,8 @@
 {
-  "name": "claude-usage-monitor",
-  "displayName": "Claude Usage Monitor",
-  "description": "Surfaces Claude Code conversation token usage in VSCode — per-window scoped status bar, sidebar breakdown, rich hover card, and a configurable nudge when thresholds are crossed.",
-  "version": "0.0.8",
+  "name": "BRAINs-claude-usage-monitor",
+  "displayName": "BRAINs Claude Usage Monitor",
+  "description": "Anthropic-billable Claude Code token meter — rolling 5h / 7d windows, last-hour sparkline, configurable nudge. A BRAINs Certified extension. Reads ~/.claude/projects/ locally; no network, no telemetry.",
+  "version": "0.1.0",
   "publisher": "BRAINs-Certified",
   "license": "MIT",
   "icon": "assets/icon.png",

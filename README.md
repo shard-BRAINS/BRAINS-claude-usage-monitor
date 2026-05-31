@@ -1,6 +1,6 @@
-# Claude Usage Monitor
+# BRAINs Claude Usage Monitor
 
-A VSCode extension that shows how many tokens your Claude Code chat has used, so you know when to start a fresh session before you hit a context or plan limit.
+A VSCode extension that shows how many tokens your Claude Code chat has used, so you know when to start a fresh session before you hit a context or plan limit. Published by **BRAINs Certified**.
 
 [![CI](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml)
 
@@ -24,20 +24,28 @@ A VSCode extension that shows how many tokens your Claude Code chat has used, so
 
 ## Install
 
-The extension is not yet on the VSCode Marketplace. To install locally, download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
+**From the VSCode Marketplace** (once live):
 
 ```
-code --install-extension claude-usage-monitor-0.0.7.vsix
+code --install-extension BRAINs-Certified.BRAINs-claude-usage-monitor
+```
+
+Or search **"BRAINs Claude Usage Monitor"** in the VSCode Extensions sidebar.
+
+**From the GitHub release** (always available): download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
+
+```
+code --install-extension BRAINs-claude-usage-monitor-0.1.0.vsix
 ```
 
 Reload the VSCode window to activate. The extension lights up on startup and watches `~/.claude/projects/` automatically.
 
-To build from source:
+**From source:**
 
 ```
 npm install
 npm run package
-code --install-extension claude-usage-monitor-0.0.7.vsix --force
+code --install-extension BRAINs-claude-usage-monitor-0.1.0.vsix --force
 ```
 
 ## Settings
