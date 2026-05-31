@@ -38,13 +38,28 @@ test('renderProgressBarSvg uses blue under warning, orange in warning, red at cr
   expect(red).toContain('#e25656');
 });
 
-test('renderProgressBarSvg with null limit renders empty bar', () => {
+test('renderProgressBarSvg with null limit renders hatched "unconfigured" pattern', () => {
   const svg = renderProgressBarSvg(100, null);
-  // No fill color rect — background only
-  expect(svg).toContain('#3c3c3c');
+  // Diagonal hatch pattern, no fill colors
+  expect(svg).toContain('<pattern');
+  expect(svg).toContain('patternTransform="rotate(45)"');
+  expect(svg).toContain('url(#phatch-');
   expect(svg).not.toContain('#4a90e2');
   expect(svg).not.toContain('#e0a83a');
   expect(svg).not.toContain('#e25656');
+});
+
+test('renderProgressBarSvg renders min 3px sliver when fill would round below 3px', () => {
+  // ratio = 0.005 → would produce fillWidth = round(0.005 * 200) = 1px without min
+  const svg = renderProgressBarSvg(5, 1000);
+  expect(svg).toContain('width="3"');
+  expect(svg).toContain('#4a90e2');
+});
+
+test('renderProgressBarSvg does not apply min-sliver when used is exactly 0', () => {
+  const svg = renderProgressBarSvg(0, 1000);
+  // Fill rect should be absent entirely
+  expect(svg).not.toContain('#4a90e2');
 });
 
 // ---------------------------------------------------------------------------

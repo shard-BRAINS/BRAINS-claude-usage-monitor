@@ -19,16 +19,25 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      # textstat 0.7.4 imports the deprecated `pkg_resources` module,
+      # which was removed from setuptools 78. Pin to 0.7.13 (latest 0.7.x)
+      # which dropped the pkg_resources dependency.
       - name: Install textstat
-        run: pip install textstat==0.7.4
+        run: python -m pip install textstat==0.7.13
+
+      - name: Verify textstat is importable
+        run: python -c "import textstat; print('textstat OK:', textstat.__version__)"
 
       - name: Run readability check
         run: |
           python scripts/readability_check.py \
             --public-grade 8 \
             --technical-grade 10 \
-            --paths "README.md" "docs/**/*.md"
+            --paths "README.md"

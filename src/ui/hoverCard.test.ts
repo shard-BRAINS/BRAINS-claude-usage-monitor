@@ -79,7 +79,7 @@ test('renderHoverMarkdown contains all required section headers', () => {
   expect(md.value).toContain('Session (5h)');
   expect(md.value).toContain('Weekly (7d)');
   expect(md.value).toContain('This window');
-  expect(md.value).toContain('All sessions');
+  expect(md.value).toContain('Recently active sessions');
 });
 
 // ---------------------------------------------------------------------------
@@ -153,7 +153,7 @@ test('all-sessions list caps at 5 even when input has 10 entries', () => {
 test('empty allSessions renders section header without crashing', () => {
   const data = makeData({ allSessions: [] });
   const md = renderHoverMarkdown(data);
-  expect(md.value).toContain('All sessions');
+  expect(md.value).toContain('Recently active sessions');
   expect(md.value).toContain('No sessions found');
 });
 

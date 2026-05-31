@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Trivy vulnerability scanner (filesystem)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.20.0
         with:
           scan-type: 'fs'
           scan-ref: '.'
@@ -33,14 +33,14 @@ jobs:
           ignore-unfixed: true
 
       - name: Upload Trivy fs SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-fs.sarif
           category: trivy-fs
 
       - name: Run Trivy config scanner (IaC, Dockerfiles, K8s)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.20.0
         with:
           scan-type: 'config'
           scan-ref: '.'
@@ -49,7 +49,7 @@ jobs:
           severity: 'CRITICAL,HIGH,MEDIUM'
 
       - name: Upload Trivy config SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-config.sarif

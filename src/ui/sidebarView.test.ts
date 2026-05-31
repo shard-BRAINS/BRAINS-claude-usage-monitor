@@ -118,7 +118,7 @@ test('renderUsagePanel contains all major section labels', () => {
   expect(html).toContain('Session (5h)');
   expect(html).toContain('Weekly (7d)');
   expect(html).toContain('This window');
-  expect(html).toContain('All sessions');
+  expect(html).toContain('Recently active sessions');
 });
 
 test('renderUsagePanel shows "n/a" when session limit is null', () => {
