@@ -6,7 +6,7 @@ no programmatic way to trigger a notification assert).
 
 ## 1 — Install the VSIX
 
-```
+```bash
 code --install-extension BRAINS-claude-usage-monitor-0.1.0.vsix
 ```
 

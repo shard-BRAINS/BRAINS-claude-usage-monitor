@@ -22,7 +22,7 @@ jobs:
         uses: errata-ai/vale-action@reviewdog
         with:
           version: 3.9.1
-          files: '["README.md", "docs", "CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md"]'
+          files: '["README.md", "CONTRIBUTING.md", "SECURITY.md", "CODE_OF_CONDUCT.md"]'
           fail_on_error: false
           filter_mode: nofilter
           reporter: github-pr-review
