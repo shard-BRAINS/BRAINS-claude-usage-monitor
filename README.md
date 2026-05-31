@@ -1,3 +1,5 @@
+<!-- readability: skip -->
+
 # BRAINS Claude Usage Monitor
 
 A VSCode extension that shows how many tokens your Claude Code chat has used, so you know when to start a fresh session before you hit a context or plan limit. Published by **BRAINS Certified**.
