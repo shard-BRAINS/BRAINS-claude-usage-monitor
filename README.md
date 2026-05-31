@@ -100,14 +100,14 @@ Raw component totals (input, output, cache-create, cache-read) are preserved on 
 
 ## Development
 
-```
+```bash
 npm install
 npm run watch      # esbuild in watch mode
 ```
 
 Press **F5** in VSCode to open the Extension Development Host with the extension loaded.
 
-```
+```bash
 npm test                # Vitest unit tests (135 tests)
 npm run lint            # ESLint
 npm run package         # build + vsce package → .vsix
