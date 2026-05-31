@@ -29,6 +29,13 @@ jobs:
       - name: Install textstat
         run: python -m pip install textstat==0.7.4
 
+      - name: Verify textstat is importable
+        run: |
+          which python
+          python -c "import sys; print('executable:', sys.executable)"
+          python -m pip show textstat
+          python -c "import textstat; print('textstat OK at:', textstat.__file__)"
+
       - name: Run readability check
         run: |
           python scripts/readability_check.py \
