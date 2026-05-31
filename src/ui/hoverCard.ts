@@ -62,8 +62,8 @@ export function renderHoverMarkdown(data: HoverCardData): vscode.MarkdownString 
   // --- Session window row ---
   const sessionResetStr =
     session.nextResetAt !== undefined
-      ? `Reset in ${countdownFormat(session.nextResetAt - nowMs)}`
-      : 'Reset in —';
+      ? `Oldest rolls off in ${countdownFormat(session.nextResetAt - nowMs)}`
+      : 'Oldest rolls off in —';
 
   lines.push(
     `**${session.windowLabel}**: ${commaFormat(session.used)} tokens · ${percentageLabel(session.used, session.limit)} · ${sessionResetStr}`,
@@ -74,8 +74,8 @@ export function renderHoverMarkdown(data: HoverCardData): vscode.MarkdownString 
   // --- Weekly window row ---
   const weeklyResetStr =
     weekly.nextResetAt !== undefined
-      ? `Reset in ${countdownFormat(weekly.nextResetAt - nowMs)}`
-      : 'Reset in —';
+      ? `Oldest rolls off in ${countdownFormat(weekly.nextResetAt - nowMs)}`
+      : 'Oldest rolls off in —';
 
   lines.push(
     `**${weekly.windowLabel}**: ${commaFormat(weekly.used)} tokens · ${percentageLabel(weekly.used, weekly.limit)} · ${weeklyResetStr}`,
@@ -118,8 +118,8 @@ export function renderHoverMarkdown(data: HoverCardData): vscode.MarkdownString 
   lines.push('---');
   lines.push('');
 
-  // --- All sessions ---
-  lines.push('**All sessions** (last 5 by activity)');
+  // --- Recently active sessions ---
+  lines.push('**Recently active sessions** (last 5)');
   if (allSessions.length === 0) {
     lines.push('No sessions found');
   } else {
