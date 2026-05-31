@@ -9,16 +9,29 @@
 
 ### Know how many tokens your Claude Code chat has used — before you hit a limit.
 
+<br />
+
+[![Marketplace](https://img.shields.io/visual-studio-marketplace/v/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&label=Marketplace&style=for-the-badge&labelColor=0A0A0A)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&style=for-the-badge&labelColor=0A0A0A)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&style=for-the-badge&labelColor=0A0A0A)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor&ssr=false#review-details)
+[![Licence](https://img.shields.io/badge/licence-MIT-0A0A0A?style=for-the-badge&labelColor=D99518)](LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=FFFFFF&labelColor=0A0A0A)](https://discord.gg/BEmTXXscBr)
+[![Bluesky](https://img.shields.io/badge/Bluesky-%40brainscertified.com-D99518?style=for-the-badge&logo=bluesky&logoColor=FFFFFF&labelColor=0A0A0A)](https://bsky.app/profile/brainscertified.com)
+[![Incubator](https://img.shields.io/badge/BRAINS-Incubator-4DA8FF?style=for-the-badge&labelColor=0A0A0A)](https://github.com/shard-BRAINS)
+
+<br />
+
+[Install ↓](#install) &nbsp;·&nbsp; [Settings ↓](#settings) &nbsp;·&nbsp; [How it works ↓](#how-it-works) &nbsp;·&nbsp; [Privacy ↓](#privacy-and-safety)
+
 </div>
 
-A VSCode extension that reads your local Claude Code transcripts and shows your rolling 5-hour and 7-day token usage, so you know when to start a fresh session. Published by **BRAINS Certified**. No network calls, no telemetry, no data leaves your machine.
+---
 
-[![Marketplace](https://img.shields.io/visual-studio-marketplace/v/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&label=VSCode%20Marketplace&labelColor=0A0A0A&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&labelColor=0A0A0A&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
-[![Rating](https://img.shields.io/visual-studio-marketplace/r/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&labelColor=0A0A0A&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor&ssr=false#review-details)
-[![CI](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/shard-BRAINS/BRAINS-claude-usage-monitor/badge)](https://scorecard.dev/viewer/?uri=github.com/shard-BRAINS/BRAINS-claude-usage-monitor)
-[![License: MIT](https://img.shields.io/badge/License-MIT-D99518.svg?labelColor=0A0A0A&style=flat-square)](LICENSE)
+A VSCode extension that reads your local Claude Code transcripts and shows your rolling 5-hour and 7-day token usage, so you know when to start a fresh session. No network calls, no telemetry, no data leaves your machine.
+
+> **Reliable, affirming, inclusive.**
+
+**An Incubator project from [BRAINS](https://github.com/shard-BRAINS) — built by neurodivergent minds, for neurodivergent people.**
 
 ---
 
@@ -41,8 +54,6 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 ## Install
 
 **From the VSCode Marketplace:**
-
-[![Install from Marketplace](https://img.shields.io/badge/Install%20from%20Marketplace-D99518?style=for-the-badge&logo=visualstudiocode&logoColor=0A0A0A&labelColor=0A0A0A)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
 
 ```bash
 code --install-extension BRAINS-Certified.BRAINS-claude-usage-monitor
@@ -142,29 +153,16 @@ Vulnerabilities should be reported via GitHub Security Advisories on this repo, 
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). The repo runs OpenSSF Scorecard, CodeQL, Trivy, Gitleaks, Dependabot, Vale (BRAINS prose rules), and a readability gate on every pull request — these are the BRAINS standard floor for any BRAINS-branded repository.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). The repo runs the BRAINS standard floor on every pull request — OpenSSF Scorecard, CodeQL, Trivy, Gitleaks, Dependabot, Vale (BRAINS prose rules), and a readability gate.
+
+[![CI](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/shard-BRAINS/BRAINS-claude-usage-monitor/badge)](https://scorecard.dev/viewer/?uri=github.com/shard-BRAINS/BRAINS-claude-usage-monitor)
 
 ## About this project
 
-BRAINS Claude Usage Monitor is a [BRAINS Incubator](https://brainscertified.com) project — one of the tools BRAINS uses internally to keep our own Claude Code work observable and accountable. It was the first end-to-end build run through the [BRAINS Build Platform](https://github.com/shard-BRAINS/BRAINS-build-platform), so the seventeen work packages, decisions log, and persona dispatch trail that produced it are part of the platform's dogfood history.
+BRAINS Claude Usage Monitor is one of the tools BRAINS uses internally to keep our own Claude Code work observable and accountable. It was the first end-to-end build run through the [BRAINS Build Platform](https://github.com/shard-BRAINS/BRAINS-build-platform), so the seventeen work packages, decisions log, and persona dispatch trail that produced it are part of the platform's dogfood history.
 
 BRAINS is the global benchmark for neuro-affirming AI. We publish tools, research, and certifications grounded in a single design principle — that AI systems should be usable across the full range of human cognition, including the engineers who build them. Issues, suggestions, and pull requests are welcome.
-
-**Reliable, affirming, inclusive.**
-
----
-
-<div align="center">
-
-[![Website](https://img.shields.io/badge/brainscertified.com-D99518?style=for-the-badge&logo=safari&logoColor=FFFFFF&labelColor=0A0A0A)](https://brainscertified.com)
-[![Discord](https://img.shields.io/badge/Discord-Join%20the%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=FFFFFF&labelColor=0A0A0A)](https://discord.gg/BEmTXXscBr)
-[![Bluesky](https://img.shields.io/badge/Bluesky-%40brainscertified.com-D99518?style=for-the-badge&logo=bluesky&logoColor=FFFFFF&labelColor=0A0A0A)](https://bsky.app/profile/brainscertified.com)
-
-<br />
-
-**Built by neurodivergent minds, for neurodivergent people.**
-
-</div>
 
 ## License
 
