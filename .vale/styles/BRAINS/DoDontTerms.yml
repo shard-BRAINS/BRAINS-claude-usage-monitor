@@ -1,0 +1,38 @@
+extends: substitution
+message: "BRAINS Do/Don't: prefer '%s' over '%s'."
+level: error
+ignorecase: true
+nonword: false
+action:
+  name: replace
+swap:
+  '(?i)\bperson with autism\b': 'autistic person'
+  '(?i)\bpersons with autism\b': 'autistic people'
+  '(?i)\bpeople with autism\b': 'autistic people'
+  '(?i)\bindividuals with autism\b': 'autistic people'
+  '(?i)\bsuffers? from autism\b': 'is autistic'
+  '(?i)\bsuffering from autism\b': 'autistic'
+  '(?i)\bsuffers? from ADHD\b': 'has ADHD'
+  '(?i)\bsuffering from ADHD\b': 'has ADHD'
+  '(?i)\bsuffers? from\b': 'lives with'
+  '(?i)\bhigh[-\s]functioning autism\b': 'autism'
+  '(?i)\blow[-\s]functioning autism\b': 'autism'
+  '(?i)\bhigh[-\s]functioning autistic\b': 'autistic'
+  '(?i)\blow[-\s]functioning autistic\b': 'autistic'
+  '(?i)\bspecial needs\b': 'access needs'
+  '(?i)\bspecial education needs\b': 'additional learning needs'
+  '(?i)\bneurodiverse individual\b': 'neurodivergent person'
+  '(?i)\bneurodiverse individuals\b': 'neurodivergent people'
+  '(?i)\bneurodiverse person\b': 'neurodivergent person'
+  '(?i)\bneurodiverse people\b': 'neurodivergent people'
+  '(?i)\bcommunication deficits?\b': 'communication differences'
+  '(?i)\bcognitive impairments?\b': 'processing differences'
+  '(?i)\bsensory issues\b': 'sensory needs'
+  '(?i)\bsensory problems\b': 'sensory needs'
+  '(?i)\bAI for the disabled\b': 'AI that works for every mind'
+  '(?i)\bneurodivergent sufferers\b': 'the neurodivergent community'
+  '(?i)\btantrum\b': 'meltdown'
+  '(?i)\bfreak[-\s]out\b': 'meltdown'
+  '(?i)\bnon[-\s]verbal\b': 'non-speaking'
+  '(?i)\bafflicted with\b': 'has'
+  '(?i)\bstricken with\b': 'has'

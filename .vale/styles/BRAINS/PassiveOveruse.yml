@@ -1,0 +1,7 @@
+extends: existence
+message: "Passive voice ('%s') — prefer active voice for BRAINS copy. Allowed in research/methods sections."
+level: warning
+ignorecase: true
+nonword: false
+tokens:
+  - '\b(?:am|are|were|being|is|been|was|be)\s+\w+(?:ed|en)\b'

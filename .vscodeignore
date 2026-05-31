@@ -18,6 +18,13 @@ scripts/**
 .brains-build/**
 docs/**
 package-output.txt
+SECURITY.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+.vale/**
+.vale.ini
+.markdownlint.json
+.gitleaks.toml
 assets/icon.svg
 !assets/icon.png
 !assets/sidebar-icon.svg

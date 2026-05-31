@@ -1,0 +1,16 @@
+extends: existence
+message: "Deficit framing detected: '%s'. Rewrite to describe the system failing the person, not the person failing."
+level: error
+ignorecase: true
+nonword: false
+tokens:
+  - 'autistic\s+(?:people|users|adults|children|students)\s+struggle\s+with'
+  - 'autistic\s+(?:people|users|adults|children|students)\s+can(?:not|\'t)\s+(?:cope|handle|manage)'
+  - 'neurodivergent\s+(?:people|users)\s+struggle\s+with'
+  - 'ADHD\s+(?:people|users|adults)\s+can(?:not|\'t)\s+focus'
+  - 'people\s+who\s+suffer\s+from'
+  - 'those\s+afflicted\s+(?:with|by)'
+  - '(?:burden|burdened)\s+(?:of|with|by)\s+(?:autism|ADHD|neurodivergence)'
+  - 'normal\s+(?:brain|mind|cognition|kid|adult|child)'
+  - 'mentally\s+abnormal'
+  - 'cognitively\s+abnormal'

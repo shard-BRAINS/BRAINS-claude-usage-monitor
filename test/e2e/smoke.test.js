@@ -40,7 +40,7 @@ const assert = __importStar(require("assert"));
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const Mocha = require('mocha');
 const vscode = __importStar(require("vscode"));
-const EXT_ID = 'brains-build.claude-usage-monitor';
+const EXT_ID = 'BRAINS-Certified.BRAINS-claude-usage-monitor';
 // Compiled by tsc with module=commonjs, so the named export below becomes
 // `exports.run`. We also explicitly attach `module.exports.run` so the loader
 // contract @vscode/test-electron requires (CommonJS `{ run }`) is honored

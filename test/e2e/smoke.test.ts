@@ -5,7 +5,8 @@ import * as assert from 'assert';
 const Mocha = require('mocha') as typeof import('mocha');
 import * as vscode from 'vscode';
 
-const EXT_ID = 'brains-build.claude-usage-monitor';
+// Must match `<publisher>.<name>` in package.json.
+const EXT_ID = 'BRAINS-Certified.BRAINS-claude-usage-monitor';
 
 // Compiled by tsc with module=commonjs, so the named export below becomes
 // `exports.run`. We also explicitly attach `module.exports.run` so the loader

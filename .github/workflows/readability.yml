@@ -1,0 +1,34 @@
+name: Readability gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  readability:
+    name: Flesch-Kincaid grade check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install textstat
+        run: pip install textstat==0.7.4
+
+      - name: Run readability check
+        run: |
+          python scripts/readability_check.py \
+            --public-grade 8 \
+            --technical-grade 10 \
+            --paths "README.md" "docs/**/*.md"
