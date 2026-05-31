@@ -55,12 +55,12 @@
     var nowMs = data.nowMs || Date.now();
 
     var sessionResetStr = session.nextResetAt != null
-      ? 'Reset in ' + countdownFormat(session.nextResetAt - nowMs)
-      : 'Reset in —';
+      ? 'Oldest rolls off in ' + countdownFormat(session.nextResetAt - nowMs)
+      : 'Oldest rolls off in —';
 
     var weeklyResetStr = weekly.nextResetAt != null
-      ? 'Reset in ' + countdownFormat(weekly.nextResetAt - nowMs)
-      : 'Reset in —';
+      ? 'Oldest rolls off in ' + countdownFormat(weekly.nextResetAt - nowMs)
+      : 'Oldest rolls off in —';
 
     var html = '<div class="usage-panel">';
     html += '<h3 class="panel-title">Claude Usage</h3>';
@@ -105,7 +105,7 @@
     }
 
     html += '<hr>';
-    html += '<h4 class="panel-subtitle">All sessions (last 5 by activity)</h4>';
+    html += '<h4 class="panel-subtitle">Recently active sessions (last 5)</h4>';
 
     var top5 = allSessions.slice(0, 5);
     if (top5.length === 0) {

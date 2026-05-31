@@ -16,7 +16,11 @@ export interface Sample {
  *   ratio < 1.0  => orange #e0a83a
  *   ratio >= 1.0 => red    #e25656
  *
- * When limit is null or <= 0, renders background only (empty bar).
+ * When used > 0 but the fill would round below MIN_FILL_PX, a MIN_FILL_PX
+ * sliver is rendered instead so small percentages remain visible.
+ *
+ * When limit is null or <= 0, renders a diagonal-hatch pattern signalling
+ * "no limit configured" (visually distinct from a 0% bar).
  */
 export function renderProgressBarSvg(
   used: number,
@@ -24,30 +28,42 @@ export function renderProgressBarSvg(
   width = 200,
   height = 10,
 ): string {
-  let fillWidth = 0;
-  let fillColor = '#4a90e2';
+  const MIN_FILL_PX = 3;
+  const rx = Math.round(height / 2);
 
-  if (limit !== null && limit > 0) {
-    const ratio = used / limit;
-    fillWidth = Math.round(Math.min(1, ratio) * width);
-
-    if (ratio >= 1.0) {
-      fillColor = '#e25656';
-    } else if (ratio >= 0.8) {
-      fillColor = '#e0a83a';
-    } else {
-      fillColor = '#4a90e2';
-    }
+  // --- Unconfigured (no limit) state: diagonal hatch ---
+  if (limit === null || limit <= 0) {
+    const patternId = `phatch-${width}-${height}`;
+    return (
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
+      `<defs>` +
+      `<pattern id="${patternId}" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">` +
+      `<rect width="3" height="6" fill="#5a5a5a"/>` +
+      `<rect x="3" width="3" height="6" fill="#3c3c3c"/>` +
+      `</pattern>` +
+      `</defs>` +
+      `<rect width="${width}" height="${height}" rx="${rx}" fill="url(#${patternId})"/>` +
+      `</svg>`
+    );
   }
+
+  // --- Normal fill ---
+  const ratio = used / limit;
+  let fillWidth = Math.round(Math.min(1, ratio) * width);
+  if (used > 0 && fillWidth < MIN_FILL_PX) fillWidth = MIN_FILL_PX;
+
+  let fillColor = '#4a90e2';
+  if (ratio >= 1.0) fillColor = '#e25656';
+  else if (ratio >= 0.8) fillColor = '#e0a83a';
 
   const fillRect =
     fillWidth > 0
-      ? `<rect width="${fillWidth}" height="${height}" rx="${Math.round(height / 2)}" fill="${fillColor}"/>`
+      ? `<rect width="${fillWidth}" height="${height}" rx="${rx}" fill="${fillColor}"/>`
       : '';
 
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
-    `<rect width="${width}" height="${height}" rx="${Math.round(height / 2)}" fill="#3c3c3c"/>` +
+    `<rect width="${width}" height="${height}" rx="${rx}" fill="#3c3c3c"/>` +
     fillRect +
     `</svg>`
   );

@@ -57,13 +57,13 @@ export function renderUsagePanel(data: HoverCardData): string {
 
   const sessionResetStr =
     session.nextResetAt !== undefined
-      ? `Reset in ${countdownFormat(session.nextResetAt - nowMs)}`
-      : 'Reset in —';
+      ? `Oldest rolls off in ${countdownFormat(session.nextResetAt - nowMs)}`
+      : 'Oldest rolls off in —';
 
   const weeklyResetStr =
     weekly.nextResetAt !== undefined
-      ? `Reset in ${countdownFormat(weekly.nextResetAt - nowMs)}`
-      : 'Reset in —';
+      ? `Oldest rolls off in ${countdownFormat(weekly.nextResetAt - nowMs)}`
+      : 'Oldest rolls off in —';
 
   const sessionBarSvg = renderProgressBarSvg(session.used, session.limit, 220, 12);
   const weeklyBarSvg = renderProgressBarSvg(weekly.used, weekly.limit, 220, 12);
@@ -137,7 +137,7 @@ export function renderUsagePanel(data: HoverCardData): string {
 
   <hr>
 
-  <h4 class="panel-subtitle">All sessions (last 5 by activity)</h4>
+  <h4 class="panel-subtitle">Recently active sessions (last 5)</h4>
   ${sessionListHtml}
 </div>
   `.trim();
