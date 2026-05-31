@@ -9,12 +9,16 @@ tsconfig.json
 esbuild.config.mjs
 .eslintrc.cjs
 .eslint*
+.gitignore
+.gitattributes
 node_modules/**
 .vscode-test/**
 .github/**
 scripts/**
 .brains-build/**
 docs/**
+package-output.txt
+assets/icon.svg
 !assets/icon.png
 !assets/sidebar-icon.svg
 !dist/webview/**
