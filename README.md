@@ -1,10 +1,24 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/shard-BRAINS/.github/main/profile/brand-mark-dark-bg.png">
+  <img alt="BRAINS" src="https://raw.githubusercontent.com/shard-BRAINS/.github/main/profile/brand-mark-light-bg.png" width="220">
+</picture>
+
 # BRAINS Claude Usage Monitor
 
-A VSCode extension that shows how many tokens your Claude Code chat has used, so you know when to start a fresh session before you hit a context or plan limit. Published by **BRAINS Certified**.
+### Know how many tokens your Claude Code chat has used — before you hit a limit.
 
+</div>
+
+A VSCode extension that reads your local Claude Code transcripts and shows your rolling 5-hour and 7-day token usage, so you know when to start a fresh session. Published by **BRAINS Certified**. No network calls, no telemetry, no data leaves your machine.
+
+[![Marketplace](https://img.shields.io/visual-studio-marketplace/v/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&label=VSCode%20Marketplace&labelColor=0A0A0A&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&labelColor=0A0A0A&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&labelColor=0A0A0A&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor&ssr=false#review-details)
 [![CI](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/shard-BRAINS/BRAINS-claude-usage-monitor/badge)](https://scorecard.dev/viewer/?uri=github.com/shard-BRAINS/BRAINS-claude-usage-monitor)
-[![License: MIT](https://img.shields.io/badge/License-MIT-D99518.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-D99518.svg?labelColor=0A0A0A&style=flat-square)](LICENSE)
 
 ---
 
@@ -26,17 +40,19 @@ A VSCode extension that shows how many tokens your Claude Code chat has used, so
 
 ## Install
 
-**From the VSCode Marketplace** (once live):
+**From the VSCode Marketplace:**
 
-```
+[![Install from Marketplace](https://img.shields.io/badge/Install%20from%20Marketplace-D99518?style=for-the-badge&logo=visualstudiocode&logoColor=0A0A0A&labelColor=0A0A0A)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
+
+```bash
 code --install-extension BRAINS-Certified.BRAINS-claude-usage-monitor
 ```
 
 Or search **"BRAINS Claude Usage Monitor"** in the VSCode Extensions sidebar.
 
-**From the GitHub release** (always available): download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
+**From the GitHub release** (offline-friendly): download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
 
-```
+```bash
 code --install-extension BRAINS-claude-usage-monitor-0.1.0.vsix
 ```
 
@@ -44,7 +60,7 @@ Reload the VSCode window to activate. The extension lights up on startup and wat
 
 **From source:**
 
-```
+```bash
 npm install
 npm run package
 code --install-extension BRAINS-claude-usage-monitor-0.1.0.vsix --force
@@ -100,14 +116,14 @@ Raw component totals (input, output, cache-create, cache-read) are preserved on 
 
 ## Development
 
-```
+```bash
 npm install
 npm run watch      # esbuild in watch mode
 ```
 
 Press **F5** in VSCode to open the Extension Development Host with the extension loaded.
 
-```
+```bash
 npm test                # Vitest unit tests (135 tests)
 npm run lint            # ESLint
 npm run package         # build + vsce package → .vsix
@@ -116,7 +132,9 @@ npm run package:check   # fails if .vsix exceeds 1 MB
 
 For manual verification steps, see [test/e2e/MANUAL_CHECKS.md](test/e2e/MANUAL_CHECKS.md). An automated end-to-end smoke (local only): `npm run test:e2e`.
 
-The `assets/icon.png` shipped with this version is a 1×1 placeholder. A proper 128×128 icon will land before any VSCode Marketplace publish.
+## Changelog
+
+Release notes are in the [Changelog tab](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor&ssr=false#version-history) on the Marketplace listing.
 
 ## Security
 
@@ -130,11 +148,23 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT
 
 BRAINS Claude Usage Monitor is a [BRAINS Incubator](https://brainscertified.com) project — one of the tools BRAINS uses internally to keep our own Claude Code work observable and accountable. It was the first end-to-end build run through the [BRAINS Build Platform](https://github.com/shard-BRAINS/BRAINS-build-platform), so the seventeen work packages, decisions log, and persona dispatch trail that produced it are part of the platform's dogfood history.
 
-BRAINS is the global benchmark for neuro-affirming AI. We publish tools, research, and certifications under the principle that AI should work for every mind — including the engineers who build it. Issues, suggestions, and pull requests are welcome.
+BRAINS is the global benchmark for neuro-affirming AI. We publish tools, research, and certifications grounded in a single design principle — that AI systems should be usable across the full range of human cognition, including the engineers who build them. Issues, suggestions, and pull requests are welcome.
 
-Reliable, affirming, inclusive.
+**Reliable, affirming, inclusive.**
 
-— Built by neurodivergent minds, for neurodivergent people.
+---
+
+<div align="center">
+
+[![Website](https://img.shields.io/badge/brainscertified.com-D99518?style=for-the-badge&logo=safari&logoColor=FFFFFF&labelColor=0A0A0A)](https://brainscertified.com)
+[![Discord](https://img.shields.io/badge/Discord-Join%20the%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=FFFFFF&labelColor=0A0A0A)](https://discord.gg/BEmTXXscBr)
+[![Bluesky](https://img.shields.io/badge/Bluesky-%40brainscertified.com-D99518?style=for-the-badge&logo=bluesky&logoColor=FFFFFF&labelColor=0A0A0A)](https://bsky.app/profile/brainscertified.com)
+
+<br />
+
+**Built by neurodivergent minds, for neurodivergent people.**
+
+</div>
 
 ## License
 
