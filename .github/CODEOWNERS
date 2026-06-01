@@ -1,0 +1,27 @@
+# BRAINS Claude Usage Monitor — code owners.
+# Every PR must be reviewed by at least one of the listed owners.
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner — anything not matched below.
+*                               @McG-Arcane
+
+# Workflows and security policy require an explicit security review.
+/.github/                       @McG-Arcane
+/.github/workflows/             @McG-Arcane
+/SECURITY.md                    @McG-Arcane
+/.gitleaks.toml                 @McG-Arcane
+
+# Core extension and transcript pipeline.
+/src/extension.ts               @McG-Arcane
+/src/transcripts/               @McG-Arcane
+/src/config/                    @McG-Arcane
+
+# UI surfaces.
+/src/ui/                        @McG-Arcane
+/src/ui/webview/                @McG-Arcane
+
+# Build tooling.
+/esbuild.config.mjs             @McG-Arcane
+/package.json                   @McG-Arcane
+/package-lock.json              @McG-Arcane
+/scripts/                       @McG-Arcane

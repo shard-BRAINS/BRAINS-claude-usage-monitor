@@ -8,8 +8,7 @@ on:
   schedule:
     - cron: '0 6 * * 1'
 
-permissions:
-  contents: read
+permissions: read-all
 
 env:
   GITLEAKS_VERSION: "8.18.4"
@@ -22,8 +21,13 @@ jobs:
       security-events: write
       contents: read
     steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
@@ -50,7 +54,7 @@ jobs:
 
       - name: Upload SARIF
         if: always() && hashFiles('gitleaks.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4
         with:
           sarif_file: gitleaks.sarif
           category: gitleaks
