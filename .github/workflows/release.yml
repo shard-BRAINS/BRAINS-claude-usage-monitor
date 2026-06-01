@@ -21,7 +21,12 @@ permissions: read-all
 jobs:
   build:
     name: Build VSIX
-    runs-on: ubuntu-latest
+    # Matches ci.yml — the lockfile is generated on Windows, so an
+    # ubuntu runner trips npm/cli#4828 ("Cannot find module
+    # @rollup/rollup-linux-x64-gnu"). Build on Windows; the produced
+    # VSIX is platform-agnostic and is consumed by the Linux attest +
+    # release jobs via the artifact upload/download mechanism.
+    runs-on: windows-latest
     permissions:
       contents: read
     outputs:
@@ -56,6 +61,7 @@ jobs:
 
       - name: Package VSIX
         id: package
+        shell: bash
         run: |
           npm run package
           name=$(ls *.vsix | head -1)
@@ -66,6 +72,7 @@ jobs:
 
       - name: Compute SHA256
         id: hash
+        shell: bash
         run: |
           sha=$(sha256sum "${{ steps.package.outputs.name }}" | cut -d' ' -f1)
           echo "sha256=$sha" >> "$GITHUB_OUTPUT"
