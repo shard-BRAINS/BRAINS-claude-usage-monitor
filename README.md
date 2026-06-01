@@ -1,9 +1,6 @@
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/shard-BRAINS/.github/main/profile/brand-mark-dark-bg.png">
-  <img alt="BRAINS" src="https://raw.githubusercontent.com/shard-BRAINS/.github/main/profile/brand-mark-light-bg.png" width="220">
-</picture>
+<img alt="BRAINS" src="https://raw.githubusercontent.com/shard-BRAINS/.github/main/profile/brand-mark-light-bg.png" width="220">
 
 <!-- readability: skip -->
 
@@ -59,7 +56,7 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 **From the GitHub release:** download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
 
 ```bash
-code --install-extension BRAINS-claude-usage-monitor-0.2.2.vsix
+code --install-extension BRAINS-claude-usage-monitor-0.2.3.vsix
 ```
 
 Reload the VSCode window to activate. The extension lights up on startup and watches `~/.claude/projects/` automatically.
@@ -69,7 +66,7 @@ Reload the VSCode window to activate. The extension lights up on startup and wat
 ```bash
 npm install
 npm run package
-code --install-extension BRAINS-claude-usage-monitor-0.2.2.vsix --force
+code --install-extension BRAINS-claude-usage-monitor-0.2.3.vsix --force
 ```
 
 ## Settings

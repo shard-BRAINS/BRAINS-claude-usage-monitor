@@ -4,6 +4,19 @@ All notable changes to **BRAINS Claude Usage Monitor** are recorded here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.3] — 2026-06-02
+
+Hotfix for the Marketplace README rendering. No functional change.
+
+### Fixed
+
+- README hero used a `<picture>` element with a `<source>` for dark mode.
+  GitHub renders this correctly, but the VS Code Marketplace overview
+  renderer does not support `<picture>` or `<source>` and was echoing the
+  raw tags as literal text above and below the brand mark. Replaced with
+  a single `<img>` (light-background variant) — renders cleanly on the
+  Marketplace, GitHub, and the in-editor extension panel.
+
 ## [0.2.2] — 2026-06-01
 
 VS Code Marketplace and Open VSX listings are retired. The extension now ships
