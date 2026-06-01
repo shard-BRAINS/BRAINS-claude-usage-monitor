@@ -1,5 +1,13 @@
 import type { UsageRecord } from './types';
 
+/**
+ * Maximum JSONL line length we'll attempt to parse. Real Claude Code lines
+ * are well under 1 MB; anything larger is malformed or a transcription of
+ * binary content. Skipping rather than parsing protects against a single
+ * pathological line OOM-ing the extension host.
+ */
+export const MAX_LINE_BYTES = 4 * 1024 * 1024;
+
 function clamp(n: number): number {
   return Math.max(0, Math.trunc(n));
 }
@@ -11,6 +19,7 @@ function extractNumber(value: unknown): number {
 
 export function parseTranscriptLine(line: string): UsageRecord | null {
   try {
+    if (line.length > MAX_LINE_BYTES) return null;
     const trimmed = line.trim();
     if (trimmed.length === 0) return null;
 
@@ -31,9 +40,9 @@ export function parseTranscriptLine(line: string): UsageRecord | null {
     const tsRaw = record['timestamp'];
     let timestampMs: number | undefined;
     if (typeof tsRaw === 'string') {
-      const parsed = Date.parse(tsRaw);
-      if (!isNaN(parsed)) {
-        timestampMs = parsed;
+      const parsedTs = Date.parse(tsRaw);
+      if (!isNaN(parsedTs)) {
+        timestampMs = parsedTs;
       }
     }
 

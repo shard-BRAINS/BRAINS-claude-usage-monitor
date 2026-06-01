@@ -122,7 +122,6 @@ export function activate(context: vscode.ExtensionContext): void {
   const sidebar = new UsageSidebarProvider(
     context.extensionUri,
     watcher,
-    () => getThresholds(),
     getHoverData,
   );
   context.subscriptions.push(

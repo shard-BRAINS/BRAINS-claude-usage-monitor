@@ -1,35 +1,60 @@
+# vsce includes everything not listed here. The shipped VSIX should only
+# contain the production esbuild output, the webview assets, the icon, and
+# the user-facing README / LICENSE / CHANGELOG.
+
+# Source
 src/**
 test/**
+
+# Source-map artefacts (never shipped — strip even if a dev build wrote one)
+**/*.map
+
+# Anything TypeScript
 **/*.ts
 **/*.test.ts
 **/__fixtures__/**
 **/__mocks__/**
+
+# Build / lint / test configuration
 vitest.config.ts
 tsconfig.json
 esbuild.config.mjs
 .eslintrc.cjs
 .eslint*
-.gitignore
-.gitattributes
+
+# Tooling and CI
 node_modules/**
 .vscode-test/**
+.vscode/**
 .github/**
 scripts/**
+
+# BRAINS Build Platform run-state, internal docs, prose-lint config
 .brains-build/**
 docs/**
 package-output.txt
-SECURITY.md
-CODE_OF_CONDUCT.md
-CONTRIBUTING.md
 .vale/**
 .vale.ini
 .markdownlint.json
 .gitleaks.toml
+
+# Repo-only metadata (lives on GitHub, not in the VSIX)
+.gitignore
+.gitattributes
+SECURITY.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+
+# We ship the rendered PNG icon, not the SVG source
 assets/icon.svg
 !assets/icon.png
 !assets/sidebar-icon.svg
+
+# Production bundle + webview assets — these MUST be in the VSIX
 !dist/webview/**
 !dist/extension.js
-!dist/extension.js.map
+
+# User-facing docs that the Marketplace surfaces
 !README.md
 !LICENSE
+!CHANGELOG.md

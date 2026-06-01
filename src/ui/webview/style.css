@@ -1,44 +1,7 @@
-/* Sidebar webview styles for Claude Usage Monitor */
-
-.container {
-  padding: 8px;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2px 0;
-}
-
-.label {
-  color: var(--vscode-foreground);
-  opacity: 0.8;
-}
-
-.value {
-  text-align: right;
-  font-family: var(--vscode-editor-font-family, monospace);
-  font-size: var(--vscode-editor-font-size, 12px);
-  color: var(--vscode-foreground);
-}
-
-.progress {
-  width: 100%;
-  height: 6px;
-  background: var(--vscode-progressBar-background, #444);
-  border-radius: 3px;
-  overflow: hidden;
-  margin-top: 8px;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--vscode-charts-blue, #4a90e2);
-  transition: width 200ms ease;
-}
-
-/* Usage panel (new rolling-window layout) */
+/* Sidebar webview styles for Claude Usage Monitor.
+   The panel HTML is rendered server-side by sidebarView.ts renderUsagePanel
+   and posted as a single { type: 'panel', html } message; these styles target
+   the classes that HTML uses. */
 
 .usage-panel {
   padding: 8px;
@@ -109,7 +72,6 @@ code {
   border-radius: 2px;
 }
 
-/* SVG progress bars and sparkline */
 .progress-row {
   display: block;
   margin: 4px 0 6px 0;

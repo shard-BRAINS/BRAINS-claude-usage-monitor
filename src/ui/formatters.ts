@@ -8,9 +8,10 @@ export function commaFormat(n: number): string {
   return n.toLocaleString('en-US');
 }
 
-/** Relative time formatter: < 60s => "Ns ago"; < 60m => "Nm ago"; < 24h => "Nh ago"; else "Nd ago" */
+/** Relative time formatter: < 60s => "Ns ago"; < 60m => "Nm ago"; < 24h => "Nh ago"; else "Nd ago".
+ *  Negative diffs (clock skew, or a timestamp in the future) are clamped to "0s ago". */
 export function relativeTime(nowMs: number, thenMs: number): string {
-  const diffMs = nowMs - thenMs;
+  const diffMs = Math.max(0, nowMs - thenMs);
   const diffSec = Math.floor(diffMs / 1000);
   if (diffSec < 60) return `${diffSec}s ago`;
   const diffMin = Math.floor(diffSec / 60);

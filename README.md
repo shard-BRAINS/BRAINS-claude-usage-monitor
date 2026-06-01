@@ -66,7 +66,7 @@ Or search **"BRAINS Claude Usage Monitor"** in the VSCode Extensions sidebar.
 **From the GitHub release** (offline-friendly): download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
 
 ```bash
-code --install-extension BRAINS-claude-usage-monitor-0.1.0.vsix
+code --install-extension BRAINS-claude-usage-monitor-0.2.0.vsix
 ```
 
 Reload the VSCode window to activate. The extension lights up on startup and watches `~/.claude/projects/` automatically.
@@ -76,7 +76,7 @@ Reload the VSCode window to activate. The extension lights up on startup and wat
 ```bash
 npm install
 npm run package
-code --install-extension BRAINS-claude-usage-monitor-0.1.0.vsix --force
+code --install-extension BRAINS-claude-usage-monitor-0.2.0.vsix --force
 ```
 
 ## Settings
@@ -137,7 +137,7 @@ npm run watch      # esbuild in watch mode
 Press **F5** in VSCode to open the Extension Development Host with the extension loaded.
 
 ```bash
-npm test                # Vitest unit tests (135 tests)
+npm test                # Vitest unit tests (130 tests)
 npm run lint            # ESLint
 npm run package         # build + vsce package → .vsix
 npm run package:check   # fails if .vsix exceeds 1 MB
@@ -147,7 +147,7 @@ For manual verification steps, see [test/e2e/MANUAL_CHECKS.md](test/e2e/MANUAL_C
 
 ## Changelog
 
-Release notes are in the [Changelog tab](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor&ssr=false#version-history) on the Marketplace listing.
+Release notes are in the [Changelog tab](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor&ssr=false#version-history) on the Marketplace listing, and in [CHANGELOG.md](CHANGELOG.md) at the repo root.
 
 ## Security
 
