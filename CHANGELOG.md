@@ -4,6 +4,32 @@ All notable changes to **BRAINS Claude Usage Monitor** are recorded here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.4] — 2026-06-02
+
+Supply-chain hardening release. No functional change to the extension itself
+— same parser, same UI, same behaviour as 0.2.3. The whole delta is in how
+the artifact is built, scanned, and shipped.
+
+### Security
+
+- CI workflows now pin every third-party GitHub Action to a full commit SHA
+  (with a trailing version comment so Dependabot can still bump them),
+  closing the OpenSSF Scorecard Pinned-Dependencies gap.
+- Every workflow ships with a top-level `permissions: read-all` and
+  least-privilege per-job permissions; `ci.yml` previously inherited
+  `write-all`, which closed the Token-Permissions gap.
+- Every workflow starts with `step-security/harden-runner` (audit mode) so
+  runner egress is baselined.
+- `aquasecurity/trivy-action` bumped 0.20.0 → 0.36.0.
+- Added a tag-triggered release workflow that builds the `.vsix`, generates
+  an SLSA build provenance attestation (Sigstore-signed via GitHub OIDC, no
+  long-lived secrets), produces a `SHA256SUMS.txt`, and creates the GitHub
+  Release. Consumers can verify with
+  `gh attestation verify <vsix> --repo shard-BRAINS/BRAINS-claude-usage-monitor`.
+- Added `.github/CODEOWNERS` so pull requests trigger code-owner review.
+- Added opt-in accessibility workflow (axe-core + Pa11y) for the webview
+  surface; enable with the repo variable `HAS_WEB_UI=true`.
+
 ## [0.2.3] — 2026-06-02
 
 Hotfix for the Marketplace README rendering. No functional change.
