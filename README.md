@@ -35,6 +35,10 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 
 **An Incubator project from [BRAINS](https://github.com/shard-BRAINS) — built by neurodivergent minds, for neurodivergent people.**
 
+<p align="center">
+  <img alt="BRAINS Claude Usage Monitor — Marketplace listing with the live status-bar fill bar visible at the bottom of the VSCode window" src="https://raw.githubusercontent.com/shard-BRAINS/BRAINS-claude-usage-monitor/main/assets/screenshot.png" width="640">
+</p>
+
 ---
 
 ## TL;DR
