@@ -2,7 +2,7 @@
   "name": "BRAINS-claude-usage-monitor",
   "displayName": "BRAINS Claude Usage Monitor",
   "description": "Anthropic-billable Claude Code token meter — rolling 5h / 7d windows, last-hour sparkline, configurable nudge. A BRAINS Certified extension. Reads ~/.claude/projects/ locally; no network, no telemetry.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "BRAINS-Certified",
   "license": "MIT",
   "icon": "assets/icon.png",
@@ -76,7 +76,13 @@
         },
         "claudeUsageMonitor.nudge.mode": {
           "type": "string",
-          "enum": ["off", "once-per-session", "on-warning", "on-critical", "on-each"],
+          "enum": [
+            "off",
+            "once-per-session",
+            "on-warning",
+            "on-critical",
+            "on-each"
+          ],
           "default": "once-per-session",
           "description": "When to show the start-fresh-chat nudge. once-per-session = at most one per session; on-warning/on-critical = each time threshold crosses upward; on-each = every change event past minInterval; off = never.",
           "enumDescriptions": [
@@ -102,13 +108,19 @@
           "description": "Session ids the user has asked not to be nudged again about. Add via the Snooze action on the notification."
         },
         "claudeUsageMonitor.limits.sessionTokens": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 1,
           "default": null,
           "description": "Total tokens allowed in the rolling session window. Set to null to hide percentage display."
         },
         "claudeUsageMonitor.limits.weeklyTokens": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 1,
           "default": null,
           "description": "Total tokens allowed in the rolling weekly window. Set to null to hide percentage display."
