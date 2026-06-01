@@ -1,0 +1,139 @@
+name: Release
+
+# Tag-triggered release workflow. Push a tag like `v0.2.4` to:
+#   1. Build the VSIX from source.
+#   2. Generate an SLSA build provenance attestation (Sigstore-signed).
+#   3. Generate SHA256 checksums.
+#   4. Create a GitHub Release with the VSIX, the .intoto.jsonl provenance
+#      bundle, and the checksum file attached.
+#
+# Signing uses the GitHub OIDC-issued certificate, so no long-lived secrets
+# are required. Consumers can verify with:
+#   gh attestation verify <vsix> --repo shard-BRAINS/BRAINS-claude-usage-monitor
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions: read-all
+
+jobs:
+  build:
+    name: Build VSIX
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      vsix-name: ${{ steps.package.outputs.name }}
+      vsix-sha256: ${{ steps.hash.outputs.sha256 }}
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build:prod
+
+      - name: Package VSIX
+        id: package
+        run: |
+          npm run package
+          name=$(ls *.vsix | head -1)
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - name: Check VSIX size
+        run: npm run package:check
+
+      - name: Compute SHA256
+        id: hash
+        run: |
+          sha=$(sha256sum "${{ steps.package.outputs.name }}" | cut -d' ' -f1)
+          echo "sha256=$sha" >> "$GITHUB_OUTPUT"
+          sha256sum *.vsix > SHA256SUMS.txt
+
+      - name: Upload VSIX artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: vsix
+          path: |
+            *.vsix
+            SHA256SUMS.txt
+          retention-days: 7
+          if-no-files-found: error
+
+  attest:
+    name: SLSA build provenance
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2
+        with:
+          egress-policy: audit
+
+      - name: Download VSIX
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: vsix
+          path: .
+
+      - name: Generate build provenance attestation
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
+        with:
+          subject-path: "*.vsix"
+
+  release:
+    name: Publish GitHub Release
+    needs: [build, attest]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Download VSIX
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: vsix
+          path: .
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --generate-notes \
+            --verify-tag \
+            *.vsix SHA256SUMS.txt
