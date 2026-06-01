@@ -1,46 +1,6 @@
 import * as vscode from 'vscode';
 import type { TranscriptWatcher } from '../transcripts/watcher';
-import type { SessionTotals } from '../transcripts/types';
-import type { ThresholdsGetter } from './statusBar';
 import type { HoverCardData } from './hoverCard';
-
-// ---------------------------------------------------------------------------
-// Legacy pure rendering helper — kept for backward compat with sidebarView.test.ts
-// ---------------------------------------------------------------------------
-
-/** Row keys that map to SessionTotals fields. */
-const ROW_KEYS: Array<{ key: string; field: keyof SessionTotals }> = [
-  { key: 'input', field: 'input' },
-  { key: 'output', field: 'output' },
-  { key: 'cache-read', field: 'cacheRead' },
-  { key: 'cache-create', field: 'cacheCreate' },
-  { key: 'total', field: 'total' },
-];
-
-/**
- * Pure helper: compute formatted row values and progress bar width from
- * totals + thresholds.  Returned values are ready to inject into the DOM.
- */
-export function renderRows(
-  totals: SessionTotals,
-  thresholds: { warning: number; critical: number },
-): { rows: Record<string, string>; progressWidthPercent: string } {
-  const rows: Record<string, string> = {};
-  for (const { key, field } of ROW_KEYS) {
-    rows[key] = (totals[field] as number).toLocaleString('en-US');
-  }
-
-  const raw = thresholds.critical > 0 ? (totals.total / thresholds.critical) * 100 : 0;
-  const clamped = Math.min(Math.max(raw, 0), 100);
-  const progressWidthPercent = `${Math.round(clamped)}%`;
-
-  return { rows, progressWidthPercent };
-}
-
-// ---------------------------------------------------------------------------
-// New panel renderer — produces HTML fragments mirroring the hover card
-// ---------------------------------------------------------------------------
-
 import { commaFormat, relativeTime, countdownFormat, percentageLabel as percentLabel } from './formatters';
 import { renderProgressBarSvg, renderSparklineSvg } from './svg';
 
@@ -153,14 +113,11 @@ export class UsageSidebarProvider implements vscode.WebviewViewProvider {
   constructor(
     private readonly extensionUri: vscode.Uri,
     private readonly watcher: TranscriptWatcher,
-    private readonly getThresholds: ThresholdsGetter,
-    private readonly getHoverData?: () => HoverCardData,
+    private readonly getHoverData: () => HoverCardData,
   ) {}
 
   private _postPanel(): void {
-    if (this._webview === undefined || this.getHoverData === undefined) {
-      return;
-    }
+    if (this._webview === undefined) return;
     void this._webview.webview.postMessage({
       type: 'panel',
       html: renderUsagePanel(this.getHoverData()),
@@ -187,16 +144,8 @@ export class UsageSidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this.getHtml(webviewView.webview);
 
-    const listener = (totals: SessionTotals): void => {
-      if (this.getHoverData !== undefined) {
-        this._postPanel();
-      } else {
-        void webviewView.webview.postMessage({
-          type: 'totals',
-          totals,
-          thresholds: this.getThresholds(),
-        });
-      }
+    const listener = (): void => {
+      this._postPanel();
     };
 
     this.watcher.on('change', listener);
@@ -219,11 +168,15 @@ export class UsageSidebarProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this.extensionUri, 'dist', 'webview', 'main.js'),
     );
 
+    // CSP: deny everything by default; allow only same-origin (webview) style and script.
+    // SVG progress bars are inlined as <svg> markup, so no img-src is needed.
+    // 'unsafe-inline' on style-src-attr permits VS Code's themed inline style
+    // attributes that the sparkline/progress fragments use; it's scoped to
+    // attributes, not <style> blocks.
     const csp = [
       `default-src 'none'`,
-      `style-src ${webview.cspSource}`,
+      `style-src ${webview.cspSource} 'unsafe-inline'`,
       `script-src ${webview.cspSource}`,
-      `img-src ${webview.cspSource} https: data:`,
     ].join('; ');
 
     return /* html */ `<!DOCTYPE html>
@@ -237,31 +190,7 @@ export class UsageSidebarProvider implements vscode.WebviewViewProvider {
 </head>
 <body>
   <div id="usage-root">
-    <div class="container">
-      <div class="row row-input">
-        <span class="label">Input</span>
-        <span class="value" id="value-input">0</span>
-      </div>
-      <div class="row row-output">
-        <span class="label">Output</span>
-        <span class="value" id="value-output">0</span>
-      </div>
-      <div class="row row-cache-read">
-        <span class="label">Cache read</span>
-        <span class="value" id="value-cache-read">0</span>
-      </div>
-      <div class="row row-cache-create">
-        <span class="label">Cache create</span>
-        <span class="value" id="value-cache-create">0</span>
-      </div>
-      <div class="row row-total">
-        <span class="label">Total</span>
-        <span class="value" id="value-total">0</span>
-      </div>
-      <div class="progress">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-      </div>
-    </div>
+    <div class="usage-panel"><div class="panel-row muted">Loading…</div></div>
   </div>
   <script src="${scriptUri}"></script>
 </body>

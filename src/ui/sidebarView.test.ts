@@ -4,7 +4,7 @@ import * as path from 'path';
 
 vi.mock('vscode', () => import('./__mocks__/vscode'));
 
-import { renderRows, renderUsagePanel, UsageSidebarProvider } from './sidebarView';
+import { renderUsagePanel, UsageSidebarProvider } from './sidebarView';
 import type { SessionTotals } from '../transcripts/types';
 import type { HoverCardData, RollingSnapshot, SessionListItem } from './hoverCard';
 import { Uri, makeFakeWebviewView } from './__mocks__/vscode';
@@ -71,44 +71,6 @@ function makeHoverData(overrides: Partial<HoverCardData> = {}): HoverCardData {
 }
 
 // ---------------------------------------------------------------------------
-// Legacy renderRows tests
-// ---------------------------------------------------------------------------
-
-test('renderRows produces 0% progress for total 0', () => {
-  const totals = makeTotals({ total: 0 });
-  const { progressWidthPercent } = renderRows(totals, { warning: 100000, critical: 160000 });
-  expect(progressWidthPercent).toBe('0%');
-});
-
-test('renderRows produces 50% for total = critical/2', () => {
-  const totals = makeTotals({ total: 80000 });
-  const { progressWidthPercent } = renderRows(totals, { warning: 100000, critical: 160000 });
-  expect(progressWidthPercent).toBe('50%');
-});
-
-test('renderRows produces 100% for total >= critical (clamps)', () => {
-  const totals = makeTotals({ total: 320000 });
-  const { progressWidthPercent } = renderRows(totals, { warning: 100000, critical: 160000 });
-  expect(progressWidthPercent).toBe('100%');
-});
-
-test('renderRows formats values with comma thousands', () => {
-  const totals = makeTotals({ input: 1234567, total: 1234567 });
-  const { rows } = renderRows(totals, { warning: 100000, critical: 160000 });
-  expect(rows['input']).toBe('1,234,567');
-});
-
-test('renderRows rounds progress percent to nearest integer', () => {
-  const totals25 = makeTotals({ total: 40000 });
-  const { progressWidthPercent: pct25 } = renderRows(totals25, { warning: 100000, critical: 160000 });
-  expect(pct25).toBe('25%');
-
-  const totals33 = makeTotals({ total: 53333 });
-  const { progressWidthPercent: pct33 } = renderRows(totals33, { warning: 100000, critical: 160000 });
-  expect(pct33).toBe('33%');
-});
-
-// ---------------------------------------------------------------------------
 // renderUsagePanel tests
 // ---------------------------------------------------------------------------
 
@@ -152,7 +114,6 @@ test('UsageSidebarProvider.refresh() before resolveWebviewView is a no-op', () =
   const provider = new UsageSidebarProvider(
     Uri.file('/fake/ext'),
     watcher as unknown as import('../transcripts/watcher').TranscriptWatcher,
-    () => ({ warning: 100000, critical: 160000 }),
     makeHoverData,
   );
 
@@ -164,7 +125,6 @@ test('UsageSidebarProvider.refresh() after resolveWebviewView posts a panel mess
   const provider = new UsageSidebarProvider(
     Uri.file('/fake/ext'),
     watcher as unknown as import('../transcripts/watcher').TranscriptWatcher,
-    () => ({ warning: 100000, critical: 160000 }),
     makeHoverData,
   );
 

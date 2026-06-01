@@ -2,7 +2,7 @@
   "name": "BRAINS-claude-usage-monitor",
   "displayName": "BRAINS Claude Usage Monitor",
   "description": "Anthropic-billable Claude Code token meter — rolling 5h / 7d windows, last-hour sparkline, configurable nudge. A BRAINS Certified extension. Reads ~/.claude/projects/ locally; no network, no telemetry.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "publisher": "BRAINS-Certified",
   "license": "MIT",
   "icon": "assets/icon.png",
@@ -20,6 +20,16 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/issues",
+    "email": "security@brainscertified.com"
+  },
+  "homepage": "https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor#readme",
+  "qna": "marketplace",
+  "galleryBanner": {
+    "color": "#1A1A1A",
+    "theme": "dark"
   },
   "engines": {
     "vscode": "^1.85.0",
@@ -126,26 +136,33 @@
   },
   "scripts": {
     "build": "node esbuild.config.mjs",
+    "build:prod": "node esbuild.config.mjs --production",
     "watch": "node esbuild.config.mjs --watch",
     "lint": "eslint src --ext .ts",
     "test": "vitest run --no-file-parallelism --pool=forks",
     "test:e2e": "tsc -p test/e2e/tsconfig.json && node test/e2e/runner.js",
-    "package": "npm run build && vsce package --no-yarn --no-dependencies",
+    "package": "npm run build:prod && vsce package --no-yarn --no-dependencies",
     "package:check": "node scripts/check-vsix-size.mjs",
     "vscode:prepublish": "node esbuild.config.mjs --production"
   },
+  "overrides": {
+    "mocha": {
+      "diff": "^8.0.3",
+      "serialize-javascript": "^7.0.5"
+    }
+  },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "^20.11.0",
+    "@types/node": "^22.10.0",
     "@types/vscode": "^1.85.0",
     "@typescript-eslint/eslint-plugin": "^8.60.0",
     "@typescript-eslint/parser": "^8.60.0",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.9.1",
     "esbuild": "^0.28.0",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "mocha": "^11.7.6",
-    "typescript": "^5.4.0",
-    "vitest": "^1.4.0"
+    "typescript": "^5.7.0",
+    "vitest": "^3.2.0"
   }
 }
