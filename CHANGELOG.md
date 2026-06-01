@@ -4,6 +4,28 @@ All notable changes to **BRAINS Claude Usage Monitor** are recorded here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] — 2026-06-01
+
+VS Code Marketplace and Open VSX listings are retired. The extension now ships
+exclusively via GitHub Releases as a signed `.vsix`. No functional change.
+
+### Changed
+
+- README: removed Marketplace version / installs / rating badges (dead
+  endpoints) and the "Install from Marketplace" block. The four remaining
+  badges — MIT licence, Discord, Bluesky, BRAINS Incubator — represent the
+  channels that are still live.
+- README: removed dead Marketplace Changelog link; release notes are now
+  authoritatively in `CHANGELOG.md` and on the GitHub Releases page.
+- README: screenshot alt text no longer references the Marketplace listing.
+
+## [0.2.1] — 2026-06-01
+
+- Added a hero screenshot (`assets/screenshot.png`) to the README and the
+  Marketplace listing for visual context on the status-bar fill bar.
+- Packaging hygiene: `.vscodeignore` and `package.json` field touch-ups for
+  the (then-live) Marketplace submission.
+
 ## [0.2.0] — 2026-06-01
 
 First Marketplace release. Internals cleanup, security hardening, dependency

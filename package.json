@@ -2,7 +2,7 @@
   "name": "BRAINS-claude-usage-monitor",
   "displayName": "BRAINS Claude Usage Monitor",
   "description": "Anthropic-billable Claude Code token meter — rolling 5h / 7d windows, last-hour sparkline, configurable nudge. A BRAINS Certified extension. Reads ~/.claude/projects/ locally; no network, no telemetry.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "publisher": "BRAINS-Certified",
   "license": "MIT",
   "icon": "assets/icon.png",

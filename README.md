@@ -13,9 +13,6 @@
 
 <br />
 
-[![Marketplace](https://img.shields.io/visual-studio-marketplace/v/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&label=Marketplace&style=for-the-badge&labelColor=0A0A0A)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&style=for-the-badge&labelColor=0A0A0A)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor)
-[![Rating](https://img.shields.io/visual-studio-marketplace/r/BRAINS-Certified.BRAINS-claude-usage-monitor?color=D99518&style=for-the-badge&labelColor=0A0A0A)](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor&ssr=false#review-details)
 [![Licence](https://img.shields.io/badge/licence-MIT-0A0A0A?style=for-the-badge&labelColor=D99518)](LICENSE)
 [![Discord](https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=FFFFFF&labelColor=0A0A0A)](https://discord.gg/BEmTXXscBr)
 [![Bluesky](https://img.shields.io/badge/Bluesky-%40brainscertified.com-D99518?style=for-the-badge&logo=bluesky&logoColor=FFFFFF&labelColor=0A0A0A)](https://bsky.app/profile/brainscertified.com)
@@ -36,7 +33,7 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 **An Incubator project from [BRAINS](https://github.com/shard-BRAINS) — built by neurodivergent minds, for neurodivergent people.**
 
 <p align="center">
-  <img alt="BRAINS Claude Usage Monitor — Marketplace listing with the live status-bar fill bar visible at the bottom of the VSCode window" src="https://raw.githubusercontent.com/shard-BRAINS/BRAINS-claude-usage-monitor/main/assets/screenshot.png" width="640">
+  <img alt="BRAINS Claude Usage Monitor — VSCode window showing the live status-bar fill bar at the bottom" src="https://raw.githubusercontent.com/shard-BRAINS/BRAINS-claude-usage-monitor/main/assets/screenshot.png" width="640">
 </p>
 
 ---
@@ -59,18 +56,10 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 
 ## Install
 
-**From the VSCode Marketplace:**
+**From the GitHub release:** download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
 
 ```bash
-code --install-extension BRAINS-Certified.BRAINS-claude-usage-monitor
-```
-
-Or search **"BRAINS Claude Usage Monitor"** in the VSCode Extensions sidebar.
-
-**From the GitHub release** (offline-friendly): download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
-
-```bash
-code --install-extension BRAINS-claude-usage-monitor-0.2.0.vsix
+code --install-extension BRAINS-claude-usage-monitor-0.2.2.vsix
 ```
 
 Reload the VSCode window to activate. The extension lights up on startup and watches `~/.claude/projects/` automatically.
@@ -80,7 +69,7 @@ Reload the VSCode window to activate. The extension lights up on startup and wat
 ```bash
 npm install
 npm run package
-code --install-extension BRAINS-claude-usage-monitor-0.2.0.vsix --force
+code --install-extension BRAINS-claude-usage-monitor-0.2.2.vsix --force
 ```
 
 ## Settings
@@ -151,7 +140,7 @@ For manual verification steps, see [test/e2e/MANUAL_CHECKS.md](test/e2e/MANUAL_C
 
 ## Changelog
 
-Release notes are in the [Changelog tab](https://marketplace.visualstudio.com/items?itemName=BRAINS-Certified.BRAINS-claude-usage-monitor&ssr=false#version-history) on the Marketplace listing, and in [CHANGELOG.md](CHANGELOG.md) at the repo root.
+Release notes are in [CHANGELOG.md](CHANGELOG.md) at the repo root.
 
 ## Security
 
