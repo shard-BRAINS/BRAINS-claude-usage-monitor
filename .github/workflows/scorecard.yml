@@ -37,6 +37,11 @@ jobs:
           results_file: results.sarif
           results_format: sarif
           publish_results: true
+          # Fine-grained PAT scoped to this repo only, with
+          # Administration: Read. Unlocks the Branch-Protection check,
+          # which the default GITHUB_TOKEN cannot read.
+          # See: https://github.com/ossf/scorecard-action/blob/main/docs/authentication/fine-grained-auth-token.md
+          repo_token: ${{ secrets.SCORECARD_TOKEN }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
