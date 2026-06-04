@@ -1,23 +1,45 @@
 /* Sidebar webview styles for Claude Usage Monitor.
    The panel HTML is rendered server-side by sidebarView.ts renderUsagePanel
    and posted as a single { type: 'panel', html } message; these styles target
-   the classes that HTML uses. */
+   the classes that HTML uses.
+
+   Brand notes (BRAINS Certified Brand & Visual Identity v1.0):
+   - BRAINS Gold #FCC14D is used as a decorative accent only (left border on
+     the title, SVG fills inside the progress bars). It is never used for
+     body text — those rules cover both light and dark grounds.
+   - No italic body text. Muted rows lower opacity instead.
+   - Trust Teal / Incubator Blue are sub-brand markers and are not used here. */
+
+:root {
+  --brains-gold: #FCC14D;
+  --brains-gold-soft: rgba(252, 193, 77, 0.12);
+  --usage-track: #252a31;
+}
 
 .usage-panel {
-  padding: 8px;
+  padding: 10px 10px 12px 10px;
   font-size: var(--vscode-editor-font-size, 12px);
   color: var(--vscode-foreground);
 }
 
 .panel-title {
-  margin: 0 0 8px 0;
+  margin: 0 0 10px 0;
+  padding: 4px 0 4px 8px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--vscode-foreground);
+  border-left: 3px solid var(--brains-gold);
+  background: linear-gradient(
+    to right,
+    var(--brains-gold-soft),
+    transparent 60%
+  );
+  border-radius: 2px;
 }
 
 .panel-subtitle {
-  margin: 8px 0 4px 0;
+  margin: 10px 0 4px 0;
   font-size: 12px;
   font-weight: 600;
   color: var(--vscode-foreground);
@@ -25,7 +47,7 @@
 }
 
 .window-section {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .panel-row {
@@ -38,7 +60,7 @@
 
 .panel-row .label {
   flex-shrink: 0;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .panel-row .value {
@@ -51,7 +73,7 @@
 
 .panel-row.muted {
   opacity: 0.6;
-  font-style: italic;
+  /* No italic — brand standard: italics harm readability for many ND readers. */
 }
 
 .panel-row.session-item {
@@ -61,15 +83,15 @@
 
 .usage-panel hr {
   border: none;
-  border-top: 1px solid var(--vscode-editorWidget-border, #444);
-  margin: 8px 0;
+  border-top: 1px solid var(--vscode-editorWidget-border, #3a3a3a);
+  margin: 10px 0;
 }
 
 code {
   font-family: var(--vscode-editor-font-family, monospace);
-  background: var(--vscode-textCodeBlock-background, rgba(0,0,0,0.2));
-  padding: 1px 3px;
-  border-radius: 2px;
+  background: var(--vscode-textCodeBlock-background, rgba(255, 255, 255, 0.06));
+  padding: 1px 4px;
+  border-radius: 3px;
 }
 
 .progress-row {
@@ -80,6 +102,6 @@ code {
 
 .progress-row svg {
   display: block;
-  max-width: 100%;
+  width: 100%;
   height: auto;
 }
