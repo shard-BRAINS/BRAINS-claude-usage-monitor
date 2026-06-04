@@ -4,6 +4,36 @@ All notable changes to **BRAINS Claude Usage Monitor** are recorded here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.5] — 2026-06-03
+
+Sidebar visual refresh and progress-bar fix.
+
+### Fixed
+
+- Sidebar progress bars rendered as empty/dark rectangles when no plan limit
+  was configured. Root cause: the diagonal-hatch fallback used
+  `<defs><pattern>` with `url(#…)` fragment references inlined into the
+  webview, where strict CSP and base-URL handling can break fragment
+  resolution; both bars also shared the same pattern id, compounding the
+  failure. The renderer no longer uses `<defs>`/`<pattern>`/`url(#…)` for
+  any state — all visuals are composed from plain `<rect>` / `<polyline>` /
+  `<polygon>` elements that render reliably in webview contexts.
+
+### Changed
+
+- Progress bar palette aligned to BRAINS Brand Guidelines v1.0 (parent
+  brand). Fill bands are Gold Light `#FCD17A` (< 80%), BRAINS Gold
+  `#FCC14D` (80–99%), Coral `#E26B5A` (≥ 100%). A subtle white sheen sits
+  on top of the fill for depth.
+- "No plan limit configured" state now renders a dark capsule with a thin
+  BRAINS Gold accent stripe through the middle, reading as intentional
+  rather than broken.
+- Sparkline switched from blue to BRAINS Gold with a translucent gold area
+  fill under the polyline for additional visual weight.
+- Sidebar panel title gained a BRAINS Gold left-border accent with a
+  fading gold tint, and muted rows no longer use italic (brand standard:
+  italics impair readability for many neurodivergent readers).
+
 ## [0.2.4] — 2026-06-02
 
 Supply-chain hardening release. No functional change to the extension itself
