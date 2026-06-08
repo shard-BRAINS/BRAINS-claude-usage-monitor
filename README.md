@@ -30,7 +30,7 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 **An Incubator project from [BRAINS](https://github.com/shard-BRAINS) — built by neurodivergent minds, for neurodivergent people.**
 
 <p align="center">
-  <img alt="BRAINS Claude Usage Monitor — VSCode window showing the live status-bar fill bar at the bottom" src="https://raw.githubusercontent.com/shard-BRAINS/BRAINS-claude-usage-monitor/main/assets/screenshot.png" width="640">
+  <img alt="BRAINS Claude Usage Monitor — VSCode window showing the activity-bar sidebar, the rich hover card, and the live status-bar fill bar at the bottom" src="https://raw.githubusercontent.com/shard-BRAINS/BRAINS-claude-usage-monitor/main/assets/screenshot.png" width="520">
 </p>
 
 ---
@@ -56,7 +56,7 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 **From the GitHub release:** download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
 
 ```bash
-code --install-extension BRAINS-claude-usage-monitor-0.2.4.vsix
+code --install-extension BRAINS-claude-usage-monitor-0.2.6.vsix
 ```
 
 Reload the VSCode window to activate. The extension lights up on startup and watches `~/.claude/projects/` automatically.
@@ -66,7 +66,7 @@ Reload the VSCode window to activate. The extension lights up on startup and wat
 ```bash
 npm install
 npm run package
-code --install-extension BRAINS-claude-usage-monitor-0.2.4.vsix --force
+code --install-extension BRAINS-claude-usage-monitor-0.2.6.vsix --force
 ```
 
 ## Settings
@@ -127,7 +127,7 @@ npm run watch      # esbuild in watch mode
 Press **F5** in VSCode to open the Extension Development Host with the extension loaded.
 
 ```bash
-npm test                # Vitest unit tests (130 tests)
+npm test                # Vitest unit tests (135 tests)
 npm run lint            # ESLint
 npm run package         # build + vsce package → .vsix
 npm run package:check   # fails if .vsix exceeds 1 MB
