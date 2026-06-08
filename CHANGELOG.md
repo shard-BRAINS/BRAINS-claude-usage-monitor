@@ -4,6 +4,14 @@ All notable changes to **BRAINS Claude Usage Monitor** are recorded here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.7] — 2026-06-08
+
+Certification mark.
+
+### Added
+
+- The **BRAINS Certified · Gold** badge and the Gold Standard mark in the README, with a section explaining the standard floor the repo meets.
+
 ## [0.2.6] — 2026-06-08
 
 Documentation refresh.
