@@ -47,8 +47,9 @@ CONTRIBUTING.md
 
 # We ship the rendered PNG icon, not the SVG source
 assets/icon.svg
-# README screenshot — referenced via GitHub raw URL, not packaged in the VSIX
+# README screenshot + cert badge — referenced via GitHub raw URL, not packaged in the VSIX
 assets/screenshot.png
+assets/badges/**
 !assets/icon.png
 !assets/sidebar-icon.svg
 

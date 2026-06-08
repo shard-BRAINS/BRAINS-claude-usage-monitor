@@ -149,7 +149,7 @@ Vulnerabilities should be reported via GitHub Security Advisories on this repo, 
 This repository carries the **BRAINS Certified · Gold** mark — the BRAINS standard for neuro-affirming, well-governed open source.
 
 <p align="center">
-  <a href="https://github.com/shard-BRAINS/BRAINS-template-repo/blob/main/CERTIFIED.md"><img alt="BRAINS Certified — Gold Standard" src="https://img.shields.io/badge/BRAINS%20Certified-Gold-D99518?style=for-the-badge&labelColor=0A0A0A"></a>
+  <a href="https://github.com/shard-BRAINS/BRAINS-template-repo/blob/main/CERTIFIED.md"><img alt="BRAINS Certified — Gold Standard" src="https://raw.githubusercontent.com/shard-BRAINS/BRAINS-claude-usage-monitor/main/assets/badges/brains-certified-gold.png" width="420"></a>
 </p>
 
 Gold means two things hold on `main`:
