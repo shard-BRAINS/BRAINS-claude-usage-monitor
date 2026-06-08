@@ -14,6 +14,7 @@
 [![Discord](https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=FFFFFF&labelColor=0A0A0A)](https://discord.gg/BEmTXXscBr)
 [![Bluesky](https://img.shields.io/badge/Bluesky-%40brainscertified.com-D99518?style=for-the-badge&logo=bluesky&logoColor=FFFFFF&labelColor=0A0A0A)](https://bsky.app/profile/brainscertified.com)
 [![Incubator](https://img.shields.io/badge/BRAINS-Incubator-4DA8FF?style=for-the-badge&labelColor=0A0A0A)](https://github.com/shard-BRAINS)
+[![BRAINS Certified Gold](https://img.shields.io/badge/BRAINS%20Certified-Gold-D99518?style=for-the-badge&labelColor=0A0A0A)](https://github.com/shard-BRAINS/BRAINS-template-repo/blob/main/CERTIFIED.md)
 
 <br />
 
@@ -142,6 +143,21 @@ Release notes are in [CHANGELOG.md](CHANGELOG.md) at the repo root.
 ## Security
 
 Vulnerabilities should be reported via GitHub Security Advisories on this repo, or to **security@brainscertified.com**. See [SECURITY.md](SECURITY.md) for the full policy.
+
+## BRAINS Certified · Gold
+
+This repository carries the **BRAINS Certified · Gold** mark — the BRAINS standard for neuro-affirming, well-governed open source.
+
+<p align="center">
+  <a href="https://github.com/shard-BRAINS/BRAINS-template-repo/blob/main/CERTIFIED.md"><img alt="BRAINS Certified — Gold Standard" src="https://img.shields.io/badge/BRAINS%20Certified-Gold-D99518?style=for-the-badge&labelColor=0A0A0A"></a>
+</p>
+
+Gold means two things hold on `main`:
+
+- **Every standard check passes** — OpenSSF Scorecard, CodeQL, Trivy, Gitleaks, Vale (BRAINS prose rules), readability, and Markdownlint.
+- **The ND-affirming governance files ship** — Code of Conduct, Security policy, and Contributing guide.
+
+See the full list of certified repositories in the [BRAINS registry](https://github.com/shard-BRAINS/BRAINS-template-repo/blob/main/CERTIFIED.md).
 
 ## Contributing
 
