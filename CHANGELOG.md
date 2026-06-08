@@ -4,6 +4,17 @@ All notable changes to **BRAINS Claude Usage Monitor** are recorded here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.6] — 2026-06-08
+
+Documentation refresh.
+
+### Changed
+
+- Updated the README screenshot to a current capture showing the activity-bar
+  sidebar, the rich hover card, and the live status-bar fill bar together.
+- README install snippets and the test-count note now match the shipped
+  version and the 135-test suite.
+
 ## [0.2.5] — 2026-06-03
 
 Sidebar visual refresh and progress-bar fix.
