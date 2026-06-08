@@ -57,7 +57,7 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 **From the GitHub release:** download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
 
 ```bash
-code --install-extension BRAINS-claude-usage-monitor-0.2.6.vsix
+code --install-extension BRAINS-claude-usage-monitor-0.2.7.vsix
 ```
 
 Reload the VSCode window to activate. The extension lights up on startup and watches `~/.claude/projects/` automatically.
@@ -67,7 +67,7 @@ Reload the VSCode window to activate. The extension lights up on startup and wat
 ```bash
 npm install
 npm run package
-code --install-extension BRAINS-claude-usage-monitor-0.2.6.vsix --force
+code --install-extension BRAINS-claude-usage-monitor-0.2.7.vsix --force
 ```
 
 ## Settings
