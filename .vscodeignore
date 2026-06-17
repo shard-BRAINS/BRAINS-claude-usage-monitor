@@ -45,6 +45,10 @@ SECURITY.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
 
+# OS / editor cruft
+**/Thumbs.db
+*.code-workspace
+
 # We ship the rendered PNG icon, not the SVG source
 assets/icon.svg
 # README screenshot + cert badge — referenced via GitHub raw URL, not packaged in the VSIX
