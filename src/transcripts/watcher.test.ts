@@ -174,6 +174,38 @@ test('start() against a non-existent projects dir leaves closed === false', asyn
 // Test 5: scoped slug picks only the matching project's session
 // ---------------------------------------------------------------------------
 
+test('rescanNow forces an immediate change emit, bypassing debounce', async () => {
+  const projectsDir = path.join(sandbox, 'projects');
+  const demoDir = path.join(projectsDir, 'demo');
+  fs.mkdirSync(demoDir, { recursive: true });
+
+  const sessionFile = path.join(demoDir, 'session-r.jsonl');
+  fs.writeFileSync(sessionFile, makeAssistantLine(11, 22) + '\n', 'utf8');
+
+  await watcher.start(projectsDir);
+  await nextChange(watcher, 2000); // drain initial
+
+  // Append without waiting for the watcher event to debounce
+  fs.appendFileSync(sessionFile, makeAssistantLine(100, 100) + '\n', 'utf8');
+
+  const eventPromise = nextChange(watcher, 1000);
+  await watcher.rescanNow();
+  const totals = await eventPromise;
+
+  expect(totals.input).toBe(111);
+  expect(totals.output).toBe(122);
+}, 5000);
+
+test('rescanNow on a watcher that was never started is a no-op', async () => {
+  // Fresh watcher, never started — _projectsDir is null, _rescan should early-return
+  let fired = false;
+  watcher.on('change', () => {
+    fired = true;
+  });
+  await watcher.rescanNow();
+  expect(fired).toBe(false);
+}, 2000);
+
 test('scoped slug picks only the matching project session', async () => {
   // Build .claude/projects/{proj-a,proj-b} inside sandbox
   const projectsDir = path.join(sandbox, '.claude', 'projects');

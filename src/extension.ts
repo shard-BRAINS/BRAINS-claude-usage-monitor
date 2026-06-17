@@ -128,12 +128,37 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.window.registerWebviewViewProvider('claudeUsageMonitor.view', sidebar),
   );
 
+  const folder = vscode.workspace.workspaceFolders?.[0];
+  const projectSlug = folder ? pathToProjectSlug(folder.uri.fsPath) : undefined;
+
+  // Periodic tick has three jobs, all guarding against the same failure
+  // mode: a silent fs.watch death (Windows buffer overflow, AV/indexer
+  // contention, network share hiccups). When the watcher dies it stops
+  // emitting 'change', and since the status bar is wired only to 'change',
+  // its text freezes. So the timer:
+  //   1. revives the watcher if it's closed,
+  //   2. forces a rescan that re-emits 'change' (status bar gets fresh totals),
+  //   3. rebuilds the sidebar's cached hover data.
   const refreshMs = getRefreshIntervalSeconds() * 1000;
-  const refreshTimer = setInterval(() => {
-    void buildHoverData().then((data) => {
-      cachedHoverData = data;
+  async function refreshTick(): Promise<void> {
+    try {
+      const w = watcher;
+      if (w !== undefined) {
+        if (w.closed) {
+          console.warn('[claude-usage-monitor] watcher had stopped — restarting');
+          await w.start(undefined, projectSlug);
+        } else {
+          await w.rescanNow();
+        }
+      }
+      cachedHoverData = await buildHoverData();
       sidebar.refresh();
-    });
+    } catch (err) {
+      console.warn('[claude-usage-monitor] refresh tick failed', err);
+    }
+  }
+  const refreshTimer = setInterval(() => {
+    void refreshTick();
   }, refreshMs);
   context.subscriptions.push({ dispose: () => clearInterval(refreshTimer) });
 
@@ -146,8 +171,6 @@ export function activate(context: vscode.ExtensionContext): void {
 
   watcher.on('error', (err) => console.warn('[claude-usage-monitor] watcher error', err));
 
-  const folder = vscode.workspace.workspaceFolders?.[0];
-  const projectSlug = folder ? pathToProjectSlug(folder.uri.fsPath) : undefined;
   void watcher.start(undefined, projectSlug);
 
   const nudgeState = makeWorkspaceStateNudgeState(context.workspaceState);

@@ -21,4 +21,14 @@ describe('pathToProjectSlug', () => {
   test('empty string returns empty string', () => {
     expect(pathToProjectSlug('')).toBe('');
   });
+
+  test('dots in UNC IP-style paths become dashes', () => {
+    expect(pathToProjectSlug('\\\\192.168.1.101\\share\\proj')).toBe(
+      '--192-168-1-101-share-proj',
+    );
+  });
+
+  test('dots in directory names become dashes', () => {
+    expect(pathToProjectSlug('/Users/foo/my.project')).toBe('-Users-foo-my-project');
+  });
 });

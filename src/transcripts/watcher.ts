@@ -121,10 +121,52 @@ export class TranscriptWatcher extends (EventEmitter as new () => EventEmitter &
       this._scheduleRescan();
     });
 
+    // fs.watch on Windows can silently die — buffer overflow on busy dirs,
+    // handle invalidation by AV/indexer, network share hiccups. Without
+    // listeners, an emitted error throws inside libuv and leaves a zombie
+    // watcher with no future events. Catch and reset so callers can revive
+    // via the next start() (extension.ts's periodic tick does this).
+    this._watcher.on('error', (err) => {
+      this._handleWatcherFailure(err);
+    });
+    // Some libuv backends emit 'close' on failure with no 'error' first.
+    // Treat unsolicited close the same way: zero out state, let caller revive.
+    this._watcher.on('close', () => {
+      if (!this._stopped && this._watcher !== null) {
+        this._handleWatcherFailure(new Error('fs.watch closed unexpectedly'));
+      }
+    });
+
     this._started = true;
 
     // Trigger an immediate rescan so the initial state is emitted shortly after start
     this._scheduleRescan();
+  }
+
+  private _handleWatcherFailure(err: unknown): void {
+    if (this._watcher !== null) {
+      try {
+        this._watcher.close();
+      } catch {
+        // already dead — ignore
+      }
+      this._watcher = null;
+    }
+    this.emit('error', err);
+  }
+
+  /**
+   * Force an immediate rescan, bypassing the debounce. Resolves once the
+   * rescan completes (and any 'change'/'error' has been emitted). Used by
+   * the periodic refresh in extension.ts so the status bar stays current
+   * even when fs.watch isn't firing.
+   */
+  async rescanNow(): Promise<void> {
+    if (this._debounceTimer !== null) {
+      clearTimeout(this._debounceTimer);
+      this._debounceTimer = null;
+    }
+    await this._rescan();
   }
 
   stop(): void {
