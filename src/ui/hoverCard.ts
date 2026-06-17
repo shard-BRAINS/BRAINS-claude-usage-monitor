@@ -1,18 +1,41 @@
 import * as vscode from 'vscode';
 import type { SessionTotals } from '../transcripts/types';
+import type { UnconfiguredBarStyle } from '../config/barStyle';
 import { commaFormat, relativeTime, countdownFormat, percentageLabel } from './formatters';
-import { renderProgressBarSvg, renderSparklineSvg } from './svg';
+import { renderUnconfiguredBar } from './barRenderer';
+import { renderSparklineSvg } from './svg';
 import type { Sample } from './svg';
 
 // ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------
 
+/**
+ * Per-window auxiliary data used by the no-limit fallback renderers
+ * (heatmap / sparkline / dual-band). Computed once per refresh in
+ * extension.ts and attached to RollingSnapshot.
+ */
+export interface RollingDetail {
+  /** Sparkline samples — cumulative tokens across the window, one per bucket. */
+  samples: Sample[];
+  /** Heatmap buckets — token total per bucket, oldest first. */
+  buckets: number[];
+  /** Dual-band: most-recent-bucket value vs peak bucket in window, [0, 1]. */
+  intensity: number;
+  /** Dual-band: fraction of window covered by activity, [0, 1]. */
+  saturation: number;
+}
+
 export interface RollingSnapshot {
   windowLabel: string;
   used: number;
   limit: number | null;
   nextResetAt: number | undefined;
+  /**
+   * Optional per-window detail used when no token limit is configured.
+   * When absent, the no-limit bar falls back to the static "no-plan rail".
+   */
+  detail?: RollingDetail;
 }
 
 export interface SessionListItem {
@@ -29,6 +52,8 @@ export interface HoverCardData {
   allSessions: SessionListItem[];
   nowMs: number;
   sparkline?: Sample[];
+  /** Style for the no-limit Session/Weekly bars. Defaults to 'heatmap'. */
+  barStyle?: UnconfiguredBarStyle;
 }
 
 // ---------------------------------------------------------------------------
@@ -39,8 +64,8 @@ function svgDataUri(svg: string): string {
   return `data:image/svg+xml;base64,${Buffer.from(svg, 'utf-8').toString('base64')}`;
 }
 
-function progressBarImg(used: number, limit: number | null): string {
-  return `<img src="${svgDataUri(renderProgressBarSvg(used, limit))}">`;
+function rollingBarImg(snapshot: RollingSnapshot, style: UnconfiguredBarStyle | undefined): string {
+  return `<img src="${svgDataUri(renderUnconfiguredBar(snapshot, style))}">`;
 }
 
 function sparklineImg(samples: Sample[]): string {
@@ -52,7 +77,7 @@ function sparklineImg(samples: Sample[]): string {
 // ---------------------------------------------------------------------------
 
 export function renderHoverMarkdown(data: HoverCardData): vscode.MarkdownString {
-  const { session, weekly, thisWindow, allSessions, nowMs, sparkline } = data;
+  const { session, weekly, thisWindow, allSessions, nowMs, sparkline, barStyle } = data;
 
   const lines: string[] = [];
 
@@ -68,7 +93,7 @@ export function renderHoverMarkdown(data: HoverCardData): vscode.MarkdownString 
   lines.push(
     `**${session.windowLabel}**: ${commaFormat(session.used)} tokens · ${percentageLabel(session.used, session.limit)} · ${sessionResetStr}`,
   );
-  lines.push(progressBarImg(session.used, session.limit));
+  lines.push(rollingBarImg(session, barStyle));
   lines.push('');
 
   // --- Weekly window row ---
@@ -80,7 +105,7 @@ export function renderHoverMarkdown(data: HoverCardData): vscode.MarkdownString 
   lines.push(
     `**${weekly.windowLabel}**: ${commaFormat(weekly.used)} tokens · ${percentageLabel(weekly.used, weekly.limit)} · ${weeklyResetStr}`,
   );
-  lines.push(progressBarImg(weekly.used, weekly.limit));
+  lines.push(rollingBarImg(weekly, barStyle));
   lines.push('');
 
   // --- Last hour sparkline ---
