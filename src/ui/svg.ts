@@ -175,3 +175,164 @@ export function renderSparklineSvg(
     `</svg>`
   );
 }
+
+// ---------------------------------------------------------------------------
+// Heatmap (no-limit fallback)
+// ---------------------------------------------------------------------------
+
+// Token thresholds (in the peak bucket) used to escalate the heatmap and
+// dual-band colour. Tuned around heavy-usage Claude conversations — a
+// per-hour bucket sustaining >200k tokens is "warn"; >1M is "critical".
+const PEAK_WARN_TOKENS = 200_000;
+const PEAK_CRIT_TOKENS = 1_000_000;
+
+function escalatedFillColor(peak: number): string {
+  if (peak >= PEAK_CRIT_TOKENS) return COLOR_CRIT;
+  if (peak >= PEAK_WARN_TOKENS) return COLOR_WARN;
+  return COLOR_LOW;
+}
+
+/**
+ * Returns an SVG heatmap row — one tile per bucket. Tile opacity scales
+ * linearly with that bucket's value relative to the peak bucket in the
+ * window (so the busiest tile sits at opacity 1.0 and zero-activity tiles
+ * fade to ~0.06). Empty tiles are still emitted as faint outlines so the
+ * grid structure is visible.
+ *
+ * Used when no token limit is configured — gives a "where in the window
+ * did activity happen" read at a glance, without needing a denominator.
+ */
+export function renderHeatmapSvg(
+  buckets: number[],
+  width = 200,
+  height = 14,
+): string {
+  const rx = Math.round(height / 2);
+  const trackRect = `<rect width="${width}" height="${height}" rx="${rx}" fill="${COLOR_TRACK}"/>`;
+
+  if (buckets.length === 0) {
+    return (
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
+      trackRect +
+      `</svg>`
+    );
+  }
+
+  const peak = Math.max(...buckets, 0);
+
+  // No activity in the window: leave the bar as a clean dark track so the
+  // user can tell at a glance there's nothing to plot. Tiles are only
+  // emitted when at least one bucket has data.
+  if (peak === 0) {
+    return (
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
+      trackRect +
+      `</svg>`
+    );
+  }
+
+  const fill = escalatedFillColor(peak);
+
+  // Lay out tiles with a 1px gap, inset 1px from track edges so corners breathe.
+  const inset = 1;
+  const gap = 1;
+  const n = buckets.length;
+  const usable = width - inset * 2 - gap * (n - 1);
+  const tileW = Math.max(1, Math.floor(usable / n));
+  const tileH = height - inset * 2;
+  const tileRx = Math.min(2, Math.round(tileH / 4));
+
+  // Distribute leftover pixels across the leading tiles to avoid drift.
+  const leftover = usable - tileW * n;
+
+  let tiles = '';
+  let x = inset;
+  for (let i = 0; i < n; i++) {
+    const w = tileW + (i < leftover ? 1 : 0);
+    const value = buckets[i];
+    const opacity = value === 0
+      ? 0.08
+      // Floor at 0.18 so any non-zero activity is faintly visible.
+      : 0.18 + 0.82 * (value / peak);
+    // Trim trailing zeros for opacity="1" rather than "1.00".
+    const opacityStr = Number.isInteger(opacity)
+      ? String(opacity)
+      : opacity.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+    tiles +=
+      `<rect class="tile" x="${x}" y="${inset}" width="${w}" height="${tileH}" ` +
+      `rx="${tileRx}" fill="${fill}" opacity="${opacityStr}"/>`;
+    x += w + gap;
+  }
+
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
+    trackRect +
+    tiles +
+    `</svg>`
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Dual-band (no-limit fallback)
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns an SVG with two thin stacked horizontal bands:
+ *
+ *  - Top band (intensity): width = intensity * total width. Colour escalates
+ *    gold-light → BRAINS gold → coral as intensity rises through 0.6 / 0.9.
+ *    Intensity is a [0, 1] value the caller computes — typically the most
+ *    recent bucket's value divided by the peak bucket in the window.
+ *
+ *  - Bottom band (saturation): width = saturation * total width, rendered
+ *    in muted gold. Saturation is the [0, 1] fraction of the window that
+ *    contains activity — approaches 1 as the rolling window fills up.
+ *
+ * Both inputs are clamped to [0, 1]. The two bands share the same dark
+ * track so the visual is still bar-shaped and fits the existing footprint.
+ */
+export function renderDualBandSvg(
+  intensity: number,
+  saturation: number,
+  width = 200,
+  height = 14,
+): string {
+  const rx = Math.round(height / 2);
+  const trackRect = `<rect width="${width}" height="${height}" rx="${rx}" fill="${COLOR_TRACK}"/>`;
+
+  const clamp01 = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const iN = clamp01(intensity);
+  const sN = clamp01(saturation);
+
+  // Two thin bands stacked vertically inside the track.
+  const bandH = Math.max(2, Math.round((height - 4) / 2));
+  const bandRx = Math.round(bandH / 2);
+  const topY = Math.max(1, Math.round(height / 2) - bandH - 1);
+  const botY = topY + bandH + 2;
+
+  let intensityFillColor = COLOR_LOW;
+  if (iN >= 0.9) intensityFillColor = COLOR_CRIT;
+  else if (iN >= 0.6) intensityFillColor = COLOR_WARN;
+
+  const iWidth = Math.round(iN * width);
+  const sWidth = Math.round(sN * width);
+
+  const intensityBand =
+    `<rect class="band-fill band-intensity" x="0" y="${topY}" ` +
+    `width="${iWidth}" height="${bandH}" rx="${bandRx}" ` +
+    `fill="${intensityFillColor}" opacity="0.92"/>`;
+
+  // Saturation rendered in muted gold so it reads as secondary signal.
+  const saturationBand =
+    `<rect class="band-fill band-saturation" x="0" y="${botY}" ` +
+    `width="${sWidth}" height="${bandH}" rx="${bandRx}" ` +
+    `fill="${COLOR_WARN}" opacity="0.45"/>`;
+
+  return (
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
+    trackRect +
+    intensityBand +
+    saturationBand +
+    `</svg>`
+  );
+}

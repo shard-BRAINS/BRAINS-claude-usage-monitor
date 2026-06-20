@@ -171,4 +171,5 @@ test('package.json contributes shape is correct', () => {
   expect(props).toHaveProperty('claudeUsageMonitor.limits.weeklyTokens');
   expect(props).toHaveProperty('claudeUsageMonitor.limits.sessionWindowHours');
   expect(props).toHaveProperty('claudeUsageMonitor.limits.weeklyWindowDays');
+  expect(props).toHaveProperty('claudeUsageMonitor.unconfiguredBarStyle');
 });

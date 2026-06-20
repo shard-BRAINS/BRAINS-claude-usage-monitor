@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import type { TranscriptWatcher } from '../transcripts/watcher';
 import type { HoverCardData } from './hoverCard';
 import { commaFormat, relativeTime, countdownFormat, percentageLabel as percentLabel } from './formatters';
-import { renderProgressBarSvg, renderSparklineSvg } from './svg';
+import { renderSparklineSvg } from './svg';
+import { renderUnconfiguredBar } from './barRenderer';
 
 function escape(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -13,7 +14,7 @@ function escape(s: string): string {
  * Exported for unit testing.
  */
 export function renderUsagePanel(data: HoverCardData): string {
-  const { session, weekly, thisWindow, allSessions, nowMs } = data;
+  const { session, weekly, thisWindow, allSessions, nowMs, barStyle } = data;
 
   const sessionResetStr =
     session.nextResetAt !== undefined
@@ -25,8 +26,10 @@ export function renderUsagePanel(data: HoverCardData): string {
       ? `Oldest rolls off in ${countdownFormat(weekly.nextResetAt - nowMs)}`
       : 'Oldest rolls off in —';
 
-  const sessionBarSvg = renderProgressBarSvg(session.used, session.limit, 220, 12);
-  const weeklyBarSvg = renderProgressBarSvg(weekly.used, weekly.limit, 220, 12);
+  // 14px tall to give the heatmap tile + dual-band stacked-bands room to breathe.
+  // Existing progress-bar look at 14px is indistinguishable from 12px.
+  const sessionBarSvg = renderUnconfiguredBar(session, barStyle, 220, 14);
+  const weeklyBarSvg = renderUnconfiguredBar(weekly, barStyle, 220, 14);
   const sparklineSvg = data.sparkline !== undefined
     ? renderSparklineSvg(data.sparkline, 220, 32)
     : '';

@@ -142,6 +142,21 @@
           "minimum": 5,
           "default": 30,
           "description": "How often the hover card and sidebar refresh wall-clock fields (reset countdowns, 'X ago' timestamps) when no Claude conversation activity is happening. Minimum 5 seconds."
+        },
+        "claudeUsageMonitor.unconfiguredBarStyle": {
+          "type": "string",
+          "enum": [
+            "sparkline",
+            "heatmap",
+            "dual-band"
+          ],
+          "default": "heatmap",
+          "description": "How to render the Session (5h) / Weekly (7d) bars when no token limit is configured. Has no effect when limits.sessionTokens / limits.weeklyTokens are set.",
+          "enumDescriptions": [
+            "Sparkline of cumulative tokens across the window.",
+            "Activity heatmap — one tile per hour (Session) or per day (Weekly); darker tile = more tokens in that bucket.",
+            "Two thin stacked bands: top = recent intensity (latest bucket vs window peak), bottom = time saturation (how full the window is with activity)."
+          ]
         }
       }
     }
