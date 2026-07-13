@@ -21,6 +21,9 @@ tsconfig.json
 esbuild.config.mjs
 .eslintrc.cjs
 .eslint*
+eslint.config.mjs
+eslint.config.js
+eslint.config.cjs
 
 # Tooling and CI
 node_modules/**
