@@ -7,7 +7,7 @@ The editorial source of truth is the `brains-brand` skill at `~/.claude/skills/b
 ## What each rule does
 
 | Rule | What it catches | Level |
-|---|---|---|
+| --- | --- | --- |
 | `BrandCapitalization` | "Brains" or "BRAINs" instead of `BRAINS` | error |
 | `ProtectedPhrases` | Mangled versions of the five protected phrases | error |
 | `NearParaphrase` | "AI for every brain", "neuroinclusive benchmark", etc | error |

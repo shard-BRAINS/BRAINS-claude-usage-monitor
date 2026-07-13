@@ -44,11 +44,18 @@ Burn rate, model mix, log-scale overshoot indicator, brand-palette overhaul.
 - **Roll-off ghost** now uses Deep Black at 32% opacity (was pure black at
   28%) for better contrast against the darker Gold Deep base.
 
+### Compatibility
+
+- **Minimum VSCode raised to 1.125.0** (was 1.85.0) to align with the
+  updated `@types/vscode`. `vsce package` refuses to build when the two
+  drift apart. Users on VSCode < 1.125 stay on 0.2.7.
+
 ### Fixed
 
 - README settings-table alignment row now uses space-padded pipes
   (`| --- | --- | --- |`) so markdownlint MD060 (`table-column-style:
   compact`) no longer fails on `main` — unblocks all Dependabot PR CI runs.
+- Same MD060 fix applied to `.vale/styles/BRAINS/README.md:10`.
 - Test mocks (`src/ui/__mocks__/vscode.ts`) now include the newer
   `@types/vscode` shape: `Memento.keys()` and full `Uri` field surface
   (`scheme` / `authority` / `path` / `query` / `fragment` / `with()` /
