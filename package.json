@@ -2,7 +2,7 @@
   "name": "BRAINS-claude-usage-monitor",
   "displayName": "BRAINS Claude Usage Monitor",
   "description": "Anthropic-billable Claude Code token meter — rolling 5h / 7d windows, last-hour sparkline, configurable nudge. A BRAINS Certified extension. Reads ~/.claude/projects/ locally; no network, no telemetry.",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "publisher": "BRAINS-Certified",
   "license": "MIT",
   "icon": "assets/icon.png",
@@ -32,7 +32,7 @@
     "theme": "dark"
   },
   "engines": {
-    "vscode": "^1.85.0",
+    "vscode": "^1.125.0",
     "node": ">=20"
   },
   "main": "./dist/extension.js",
@@ -146,13 +146,15 @@
         "claudeUsageMonitor.unconfiguredBarStyle": {
           "type": "string",
           "enum": [
+            "progress",
             "sparkline",
             "heatmap",
             "dual-band"
           ],
-          "default": "heatmap",
+          "default": "progress",
           "description": "How to render the Session (5h) / Weekly (7d) bars when no token limit is configured. Has no effect when limits.sessionTokens / limits.weeklyTokens are set.",
           "enumDescriptions": [
+            "Progress bar against a soft 'typical peak' reference (dashed outline signals the denominator is a default, not a hard cap).",
             "Sparkline of cumulative tokens across the window.",
             "Activity heatmap — one tile per hour (Session) or per day (Weekly); darker tile = more tokens in that bucket.",
             "Two thin stacked bands: top = recent intensity (latest bucket vs window peak), bottom = time saturation (how full the window is with activity)."
@@ -179,6 +181,7 @@
     }
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^26.1.1",
     "@types/vscode": "^1.125.0",

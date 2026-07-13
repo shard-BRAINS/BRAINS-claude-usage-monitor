@@ -6,6 +6,8 @@ export interface UsageRecord {
   timestampMs?: number;
   /** Stable id from `message.id` — used to dedupe streamed-then-finalized rows. */
   messageId?: string;
+  /** Model id from `message.model` (e.g. "claude-opus-4-7") when present. */
+  model?: string;
 }
 
 export interface SessionTotals {
@@ -28,6 +30,8 @@ export interface TimelineEntry {
   cacheCreate: number;
   cacheRead: number;
   total: number;
+  /** Model id from `message.model`; undefined when the source line omitted it. */
+  model?: string;
 }
 
 export interface SessionTimeline {

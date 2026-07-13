@@ -4,6 +4,63 @@ All notable changes to **BRAINS Claude Usage Monitor** are recorded here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] — 2026-07-13
+
+Burn rate, model mix, log-scale overshoot indicator, brand-palette overhaul.
+
+### Added
+
+- **Burn-rate row** on the Session and Weekly windows in both the hover card
+  and the sidebar — shows current tokens/min and, when known, a projected
+  ETA until usage hits the reference (e.g. `Burn: 28.3k tok/min · hits
+  220.0k in 10m`).
+- **Model-mix row** on the Session window — aggregated share of tokens by
+  model family in the current 5-hour window (e.g. `Models: Opus 100% ·
+  Other 0%`). Uses friendly family names, not raw Anthropic model ids.
+- **Log-scale overshoot indicator** on the progress bar — when usage is past
+  100% of the reference, the bar no longer clamps to a saturated block;
+  instead a Deep Black reference tick is drawn inside the fill at
+  `1 / (1 + log10(ratio))` of the width, and the region past it is subtly
+  darkened. Result: at 30–40× reference the bar still communicates how far
+  past you are.
+- **Depth cues on the progress bar** — bottom shadow strip and a bright
+  Gold Light leading-edge cap so the fill reads as a shape with an end,
+  not a flat rectangle. Existing top sheen retained.
+
+### Changed
+
+- **Brand-consistent palette.** The critical-fill colour moved from an
+  off-brand coral (`#E26B5A`) to Gold Deep (`#D99518`), keeping the whole
+  escalation inside the BRAINS gold family (Gold Light → BRAINS Gold →
+  Gold Deep). The bar track and sparkline baseline moved to official
+  scale tokens Grey 900 (`#1A1A1A`) and Grey 700 (`#3A3A3A`) — see
+  BRAINS Brand Guidelines v1.0 §5.
+- **Cleaner rendering at scale.** Sidebar bars are rendered at 640×18
+  native so the sidebar CSS scales the SVG close to 1:1 in typical widths
+  — 1-pixel dashes and ticks no longer blow up to chunky 3-pixel strokes.
+- **Warning tick and soft-reference outline are suppressed at ratio ≥ 1.0.**
+  At that state the escalated fill IS the "past threshold" signal and the
+  overlays just added noise.
+- **Roll-off ghost** now uses Deep Black at 32% opacity (was pure black at
+  28%) for better contrast against the darker Gold Deep base.
+
+### Compatibility
+
+- **Minimum VSCode raised to 1.125.0** (was 1.85.0) to align with the
+  updated `@types/vscode`. `vsce package` refuses to build when the two
+  drift apart. Users on VSCode < 1.125 stay on 0.2.7.
+
+### Fixed
+
+- README settings-table alignment row now uses space-padded pipes
+  (`| --- | --- | --- |`) so markdownlint MD060 (`table-column-style:
+  compact`) no longer fails on `main` — unblocks all Dependabot PR CI runs.
+- Same MD060 fix applied to `.vale/styles/BRAINS/README.md:10`.
+- Test mocks (`src/ui/__mocks__/vscode.ts`) now include the newer
+  `@types/vscode` shape: `Memento.keys()` and full `Uri` field surface
+  (`scheme` / `authority` / `path` / `query` / `fragment` / `with()` /
+  `toJSON()`). `npx tsc --noEmit` is clean again.
+
 ## [0.2.7] — 2026-06-08
 
 Certification mark.

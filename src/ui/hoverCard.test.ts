@@ -18,6 +18,8 @@ function makeSnapshot(overrides: Partial<RollingSnapshot> = {}): RollingSnapshot
     windowLabel: 'Session (5h)',
     used: 1000,
     limit: 10000,
+    reference: 10000,
+    referenceSource: 'configured',
     nextResetAt: BASE_NOW + 2 * 3600_000,
     ...overrides,
   };
@@ -28,6 +30,8 @@ function makeWeeklySnapshot(overrides: Partial<RollingSnapshot> = {}): RollingSn
     windowLabel: 'Weekly (7d)',
     used: 5000,
     limit: 50000,
+    reference: 50000,
+    referenceSource: 'configured',
     nextResetAt: BASE_NOW + 24 * 3600_000,
     ...overrides,
   };
@@ -83,13 +87,21 @@ test('renderHoverMarkdown contains all required section headers', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Test 2: percentage shows "n/a" when session.limit === null
+// Test 2: no configured limit → row still shows a "of typical" progress label
 // ---------------------------------------------------------------------------
 
-test('percentage shows "n/a" when session.limit is null', () => {
-  const data = makeData({ session: makeSnapshot({ limit: null }) });
+test('row shows soft-reference label when session.limit is null', () => {
+  const data = makeData({
+    session: makeSnapshot({
+      limit: null,
+      reference: 220_000,
+      referenceSource: 'default',
+      used: 22_000,
+    }),
+  });
   const md = renderHoverMarkdown(data);
-  expect(md.value).toContain('n/a');
+  expect(md.value).toContain('typical');
+  expect(md.value).toContain('10.0%');
 });
 
 // ---------------------------------------------------------------------------
@@ -107,7 +119,9 @@ test('percentage shows ">100%" when session.used exceeds session.limit', () => {
 // ---------------------------------------------------------------------------
 
 test('percentage shows "20.0%" when used=200 limit=1000', () => {
-  const data = makeData({ session: makeSnapshot({ used: 200, limit: 1000 }) });
+  const data = makeData({
+    session: makeSnapshot({ used: 200, limit: 1000, reference: 1000 }),
+  });
   const md = renderHoverMarkdown(data);
   expect(md.value).toContain('20.0%');
 });
@@ -193,4 +207,39 @@ test('hover card omits Last hour section when sparkline undefined', () => {
   const data = makeData({ sparkline: undefined });
   const md = renderHoverMarkdown(data);
   expect(md.value).not.toContain('Last hour');
+});
+
+test('hover card includes a Burn line with rate + ETA when tokensPerMin > 0', () => {
+  const data = makeData({
+    session: makeSnapshot({
+      tokensPerMin: 1500,
+      projectedExhaustMs: 20 * 60_000,
+    }),
+  });
+  const md = renderHoverMarkdown(data);
+  expect(md.value).toContain('Burn:');
+  expect(md.value).toContain('tok/min');
+  expect(md.value).toContain('hits');
+});
+
+test('hover card omits the Burn line when tokensPerMin is zero', () => {
+  const data = makeData({
+    session: makeSnapshot({ tokensPerMin: 0 }),
+    weekly: makeWeeklySnapshot({ tokensPerMin: 0 }),
+  });
+  const md = renderHoverMarkdown(data);
+  expect(md.value).not.toContain('Burn:');
+});
+
+test('hover card includes a Models line when modelMix is populated', () => {
+  const data = makeData({
+    session: makeSnapshot({
+      modelMix: [
+        { family: 'Opus', tokens: 900 },
+        { family: 'Sonnet', tokens: 100 },
+      ],
+    }),
+  });
+  const md = renderHoverMarkdown(data);
+  expect(md.value).toContain('Models:');
 });

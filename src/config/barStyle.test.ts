@@ -29,6 +29,15 @@ test('returns "heatmap" when user set it', () => {
   expect(getUnconfiguredBarStyle()).toBe('heatmap');
 });
 
+test('returns "progress" when user set it', () => {
+  __setConfig('claudeUsageMonitor', 'unconfiguredBarStyle', 'progress');
+  expect(getUnconfiguredBarStyle()).toBe('progress');
+});
+
+test('progress is the current default', () => {
+  expect(DEFAULT_UNCONFIGURED_BAR_STYLE).toBe('progress');
+});
+
 test('returns default when user set an unknown value', () => {
   __setConfig('claudeUsageMonitor', 'unconfiguredBarStyle', 'fancy');
   expect(getUnconfiguredBarStyle()).toBe(DEFAULT_UNCONFIGURED_BAR_STYLE);

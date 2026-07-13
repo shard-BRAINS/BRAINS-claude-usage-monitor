@@ -36,6 +36,8 @@ function makeSnapshot(overrides: Partial<RollingSnapshot> = {}): RollingSnapshot
     windowLabel: 'Session (5h)',
     used: 1000,
     limit: 10000,
+    reference: 10000,
+    referenceSource: 'configured',
     nextResetAt: BASE_NOW + 2 * 3600_000,
     ...overrides,
   };
@@ -46,6 +48,8 @@ function makeWeeklySnapshot(overrides: Partial<RollingSnapshot> = {}): RollingSn
     windowLabel: 'Weekly (7d)',
     used: 5000,
     limit: 50000,
+    reference: 50000,
+    referenceSource: 'configured',
     nextResetAt: BASE_NOW + 24 * 3600_000,
     ...overrides,
   };
@@ -83,9 +87,19 @@ test('renderUsagePanel contains all major section labels', () => {
   expect(html).toContain('Recently active sessions');
 });
 
-test('renderUsagePanel shows "n/a" when session limit is null', () => {
-  const html = renderUsagePanel(makeHoverData({ session: makeSnapshot({ limit: null }) }));
-  expect(html).toContain('n/a');
+test('renderUsagePanel shows soft-reference label when session limit is null', () => {
+  const html = renderUsagePanel(
+    makeHoverData({
+      session: makeSnapshot({
+        limit: null,
+        reference: 220_000,
+        referenceSource: 'default',
+        used: 22_000,
+      }),
+    }),
+  );
+  expect(html).toContain('typical');
+  expect(html).toContain('10.0%');
 });
 
 test('renderUsagePanel shows "No session found" when thisWindow is undefined', () => {
@@ -96,6 +110,52 @@ test('renderUsagePanel shows "No session found" when thisWindow is undefined', (
 test('renderUsagePanel shows "No sessions found" when allSessions is empty', () => {
   const html = renderUsagePanel(makeHoverData({ allSessions: [] }));
   expect(html).toContain('No sessions found');
+});
+
+test('renderUsagePanel renders a Burn row with rate + projected exhaust when burn > 0', () => {
+  const html = renderUsagePanel(
+    makeHoverData({
+      session: makeSnapshot({
+        tokensPerMin: 1500,
+        projectedExhaustMs: 20 * 60_000,
+      }),
+    }),
+  );
+  expect(html).toContain('>Burn<');
+  expect(html).toContain('tok/min');
+});
+
+test('renderUsagePanel suppresses the Burn row when tokensPerMin is zero', () => {
+  const html = renderUsagePanel(
+    makeHoverData({
+      session: makeSnapshot({ tokensPerMin: 0 }),
+      weekly: makeWeeklySnapshot({ tokensPerMin: 0 }),
+    }),
+  );
+  expect(html).not.toContain('>Burn<');
+});
+
+test('renderUsagePanel renders a Models row when modelMix is populated', () => {
+  const html = renderUsagePanel(
+    makeHoverData({
+      session: makeSnapshot({
+        modelMix: [
+          { family: 'Opus', tokens: 900 },
+          { family: 'Sonnet', tokens: 100 },
+        ],
+      }),
+    }),
+  );
+  expect(html).toContain('>Models<');
+});
+
+test('renderUsagePanel suppresses the Models row when modelMix is empty', () => {
+  const html = renderUsagePanel(
+    makeHoverData({
+      session: makeSnapshot({ modelMix: [] }),
+    }),
+  );
+  expect(html).not.toContain('>Models<');
 });
 
 // ---------------------------------------------------------------------------

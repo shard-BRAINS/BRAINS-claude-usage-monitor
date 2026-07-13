@@ -1,12 +1,37 @@
 import * as vscode from 'vscode';
 import type { TranscriptWatcher } from '../transcripts/watcher';
 import type { HoverCardData } from './hoverCard';
-import { commaFormat, relativeTime, countdownFormat, percentageLabel as percentLabel } from './formatters';
+import {
+  commaFormat,
+  relativeTime,
+  countdownFormat,
+  rollingRowLabel,
+  durationLabel,
+  shortTokens,
+} from './formatters';
+import { formatModelMix } from './modelMix';
+import type { RollingSnapshot } from './hoverCard';
 import { renderSparklineSvg } from './svg';
 import { renderUnconfiguredBar } from './barRenderer';
 
 function escape(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function burnRateHtml(snapshot: RollingSnapshot): string {
+  const rate = snapshot.tokensPerMin;
+  if (rate === undefined || rate <= 0) return '';
+  const eta =
+    snapshot.projectedExhaustMs !== undefined
+      ? ` &middot; hits ${escape(shortTokens(snapshot.reference))} in ${escape(durationLabel(snapshot.projectedExhaustMs))}`
+      : '';
+  return `<div class="panel-row muted"><span class="label">Burn</span><span class="value">${escape(shortTokens(Math.round(rate)))} tok/min${eta}</span></div>`;
+}
+
+function modelMixHtml(snapshot: RollingSnapshot): string {
+  const mix = snapshot.modelMix;
+  if (mix === undefined || mix.length === 0) return '';
+  return `<div class="panel-row muted"><span class="label">Models</span><span class="value">${escape(formatModelMix(mix))}</span></div>`;
 }
 
 /**
@@ -26,12 +51,14 @@ export function renderUsagePanel(data: HoverCardData): string {
       ? `Oldest rolls off in ${countdownFormat(weekly.nextResetAt - nowMs)}`
       : 'Oldest rolls off in —';
 
-  // 14px tall to give the heatmap tile + dual-band stacked-bands room to breathe.
-  // Existing progress-bar look at 14px is indistinguishable from 12px.
-  const sessionBarSvg = renderUnconfiguredBar(session, barStyle, 220, 14);
-  const weeklyBarSvg = renderUnconfiguredBar(weekly, barStyle, 220, 14);
+  // Render at a wide native size so the sidebar CSS (`width: 100%; height: auto`)
+  // only scales the SVG by a small factor. At the previous 220×14, a ~720px
+  // sidebar blew every 1px stroke, dash, and tick up ~3.3× and the bar looked
+  // rough. 640×18 keeps scaling near 1:1 in typical widths.
+  const sessionBarSvg = renderUnconfiguredBar(session, barStyle, 640, 18);
+  const weeklyBarSvg = renderUnconfiguredBar(weekly, barStyle, 640, 18);
   const sparklineSvg = data.sparkline !== undefined
-    ? renderSparklineSvg(data.sparkline, 220, 32)
+    ? renderSparklineSvg(data.sparkline, 640, 40)
     : '';
 
   let thisWindowHtml: string;
@@ -75,17 +102,20 @@ export function renderUsagePanel(data: HoverCardData): string {
   <div class="window-section">
     <div class="panel-row">
       <span class="label">${escape(session.windowLabel)}</span>
-      <span class="value">${commaFormat(session.used)} tokens &middot; ${percentLabel(session.used, session.limit)} &middot; ${sessionResetStr}</span>
+      <span class="value">${commaFormat(session.used)} tokens &middot; ${escape(rollingRowLabel(session.used, session.reference, session.referenceSource))} &middot; ${sessionResetStr}</span>
     </div>
     <div class="progress-row">${sessionBarSvg}</div>
+    ${burnRateHtml(session)}
+    ${modelMixHtml(session)}
   </div>
 
   <div class="window-section">
     <div class="panel-row">
       <span class="label">${escape(weekly.windowLabel)}</span>
-      <span class="value">${commaFormat(weekly.used)} tokens &middot; ${percentLabel(weekly.used, weekly.limit)} &middot; ${weeklyResetStr}</span>
+      <span class="value">${commaFormat(weekly.used)} tokens &middot; ${escape(rollingRowLabel(weekly.used, weekly.reference, weekly.referenceSource))} &middot; ${weeklyResetStr}</span>
     </div>
     <div class="progress-row">${weeklyBarSvg}</div>
+    ${burnRateHtml(weekly)}
   </div>
 
   ${sparklineSvg !== '' ? `<div class="window-section">

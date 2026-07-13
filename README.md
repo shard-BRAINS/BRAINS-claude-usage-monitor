@@ -39,7 +39,7 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 ## TL;DR
 
 - Reads Claude Code's local transcript files (`~/.claude/projects/**/*.jsonl`) — no network calls, no telemetry, no data leaves your machine.
-- Shows a **status bar fill bar** for the rolling 5-hour session window, a **rich hover card**, and an **activity-bar sidebar** with last-hour usage, weekly totals, and per-session breakdowns.
+- Shows a **status bar fill bar** for the rolling 5-hour session window, a **rich hover card**, and an **activity-bar sidebar** with last-hour usage, weekly totals, per-session breakdowns, current **burn rate** (tok/min plus projected ETA to your reference), and a **model mix** so you can see the Opus / Sonnet / Haiku split at a glance.
 - Counts tokens the way Anthropic bills them (input + output + cache-create × 1.25 + cache-read × 0.10) and dedupes Claude Code's streamed-then-finalised duplicate writes, so the totals line up with the Claude.ai usage meter.
 - Optional **nudge** notification when you cross a configurable threshold, with snooze and "start fresh chat" actions.
 
@@ -47,8 +47,8 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 
 ## What it does
 
-- **Status bar fill bar** — a block-character indicator (`██████░░░░ Claude 720k`) that tracks your rolling 5-hour session usage against a configurable plan limit. Colour shifts from blue to amber to red as you approach the cap.
-- **Hover card** — appears when you mouse over the status bar. Shows the rolling 5-hour and 7-day windows with their own progress bars and reset countdowns, a last-hour cumulative sparkline, a breakdown of the current chat (cumulative tokens, last-turn input/output, cache hit rate), and your five most recently active sessions across all workspaces.
+- **Status bar fill bar** — a block-character indicator (`██████░░░░ Claude 720k`) that tracks your rolling 5-hour session usage against a configurable plan limit. Background escalates through the theme's warning and error states as you approach the cap.
+- **Hover card** — appears when you mouse over the status bar. Shows the rolling 5-hour and 7-day windows with their own progress bars (Gold Light → BRAINS Gold → Gold Deep, with a log-scale overshoot tick when you go past the reference), a last-hour cumulative sparkline, current **burn rate** (tok/min plus ETA to reference), the in-window **model mix**, a breakdown of the current chat (cumulative tokens, last-turn input/output, cache hit rate), and your five most recently active sessions across all workspaces.
 - **Sidebar view** — the same panel rendered as a VSCode activity-bar webview, so you can keep usage visible permanently instead of having to hover.
 - **Configurable nudge** — a non-modal notification when the critical threshold is crossed, with **Start fresh chat** and **Snooze this session** actions. Five modes: `off`, `once-per-session`, `on-warning`, `on-critical`, `on-each`.
 
@@ -57,7 +57,7 @@ A VSCode extension that reads your local Claude Code transcripts and shows your 
 **From the GitHub release:** download the latest `.vsix` from [Releases](https://github.com/shard-BRAINS/BRAINS-claude-usage-monitor/releases) and run:
 
 ```bash
-code --install-extension BRAINS-claude-usage-monitor-0.2.7.vsix
+code --install-extension BRAINS-claude-usage-monitor-0.3.0.vsix
 ```
 
 Reload the VSCode window to activate. The extension lights up on startup and watches `~/.claude/projects/` automatically.
@@ -67,7 +67,7 @@ Reload the VSCode window to activate. The extension lights up on startup and wat
 ```bash
 npm install
 npm run package
-code --install-extension BRAINS-claude-usage-monitor-0.2.7.vsix --force
+code --install-extension BRAINS-claude-usage-monitor-0.3.0.vsix --force
 ```
 
 ## Settings
@@ -75,7 +75,7 @@ code --install-extension BRAINS-claude-usage-monitor-0.2.7.vsix --force
 All settings live under `claudeUsageMonitor.*` and can be edited in VSCode Settings or `settings.json`.
 
 | Setting | Default | What it does |
-|---|---|---|
+| --- | --- | --- |
 | `limits.sessionTokens` | `null` | Plan cap for the rolling session window. When set, the status bar fill bar and "Session" hover row show a percentage. Set this to your Claude.ai plan's 5-hour quota (e.g. `15000000` for Max). |
 | `limits.weeklyTokens` | `null` | Plan cap for the rolling weekly window. Same idea — set to your plan's weekly Opus quota. |
 | `limits.sessionWindowHours` | `5` | Length of the rolling session window in hours. Claude.ai uses 5. |
@@ -128,7 +128,7 @@ npm run watch      # esbuild in watch mode
 Press **F5** in VSCode to open the Extension Development Host with the extension loaded.
 
 ```bash
-npm test                # Vitest unit tests (135 tests)
+npm test                # Vitest unit tests (192 tests)
 npm run lint            # ESLint
 npm run package         # build + vsce package → .vsix
 npm run package:check   # fails if .vsix exceeds 1 MB

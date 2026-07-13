@@ -8,10 +8,11 @@ import {
 import type { Sample } from './svg';
 
 // BRAINS palette tokens used in the SVG renderers.
-const COLOR_LOW = '#FCD17A';
-const COLOR_WARN = '#FCC14D';
-const COLOR_CRIT = '#E26B5A';
-const COLOR_SPARK = '#FCC14D';
+// Escalation stays inside the gold family — brand has no red/alarm token.
+const COLOR_LOW = '#FCD17A';   // Gold Light
+const COLOR_WARN = '#FCC14D';  // BRAINS Gold
+const COLOR_CRIT = '#D99518';  // Gold Deep
+const COLOR_SPARK = '#FCC14D'; // BRAINS Gold
 
 // ---------------------------------------------------------------------------
 // renderProgressBarSvg
@@ -57,8 +58,8 @@ test('renderProgressBarSvg with null limit renders a no-plan rail (no pattern, n
   expect(svg).not.toContain('<pattern');
   expect(svg).not.toContain('<defs');
   expect(svg).not.toContain('url(#');
-  // Dark track is present.
-  expect(svg).toContain('#252a31');
+  // Grey 900 dark track is present.
+  expect(svg).toContain('#1A1A1A');
   // Decorative gold accent stripe is present (BRAINS Gold at reduced opacity).
   expect(svg).toContain(COLOR_WARN);
   expect(svg).toContain('opacity="0.35"');
@@ -85,6 +86,26 @@ test('renderProgressBarSvg adds a subtle highlight on filled bars', () => {
   // The white-sheen highlight sits on top of the fill at low opacity.
   expect(svg).toContain('#FFFFFF');
   expect(svg).toContain('opacity="0.22"');
+});
+
+test('renderProgressBarSvg adds a bottom shadow strip for depth on filled bars', () => {
+  const svg = renderProgressBarSvg(50, 100, 200, 14);
+  // Shadow strip sits below the highlight — Deep Black at ~18% opacity.
+  expect(svg).toContain('#0A0A0A');
+  expect(svg).toContain('opacity="0.18"');
+});
+
+test('renderProgressBarSvg draws a Gold Light leading-edge cap on filled bars', () => {
+  // width=200, used=50, limit=100 → fill=100. Cap sits at x = 100 - 2 = 98.
+  const svg = renderProgressBarSvg(50, 100, 200, 14);
+  expect(svg).toMatch(/<rect x="98" y="1" width="2" height="12"[^>]*fill="#FCD17A"[^>]*opacity="0\.7"/);
+});
+
+test('renderProgressBarSvg omits the leading-edge cap on very short fills', () => {
+  // used=1, limit=100, width=200 → fill would be 2px but clamps to MIN_FILL_PX=3.
+  // Cap requires fillWidth >= 12, so 3px fill has no cap.
+  const svg = renderProgressBarSvg(1, 100, 200, 14);
+  expect(svg).not.toContain('fill="#FCD17A" opacity="0.7"');
 });
 
 // ---------------------------------------------------------------------------
@@ -202,7 +223,7 @@ test('renderHeatmapSvg with all-zero buckets renders only the dark track (no til
   // And no brand fill colour escapes onto the bar.
   expect(svg).not.toContain('#FCC14D');
   expect(svg).not.toContain('#FCD17A');
-  expect(svg).not.toContain('#E26B5A');
+  expect(svg).not.toContain('#D99518');
 });
 
 test('renderHeatmapSvg tile opacity scales with bucket value', () => {
@@ -229,7 +250,7 @@ test('renderHeatmapSvg colour escalates from low → warn → critical with peak
   expect(heavy).toContain('#FCC14D');
   // Extreme peak triggers coral band.
   const crit = renderHeatmapSvg([0, 1_500_000, 0]);
-  expect(crit).toContain('#E26B5A');
+  expect(crit).toContain('#D99518');
 });
 
 test('renderHeatmapSvg returns valid svg dimensions', () => {
@@ -286,7 +307,7 @@ test('renderDualBandSvg saturation band fill width scales with saturation', () =
 test('renderDualBandSvg intensity colour escalates low → warn → critical', () => {
   expect(renderDualBandSvg(0.2, 0.5)).toContain('#FCD17A');
   expect(renderDualBandSvg(0.7, 0.5)).toContain('#FCC14D');
-  expect(renderDualBandSvg(0.95, 0.5)).toContain('#E26B5A');
+  expect(renderDualBandSvg(0.95, 0.5)).toContain('#D99518');
 });
 
 test('renderDualBandSvg clamps inputs to [0, 1]', () => {
@@ -305,4 +326,62 @@ test('renderDualBandSvg never emits <defs> / <pattern> / url(#…)', () => {
   expect(svg).not.toContain('<defs');
   expect(svg).not.toContain('<pattern');
   expect(svg).not.toContain('url(#');
+});
+
+// ---------------------------------------------------------------------------
+// New: warning tick, soft-reference outline, roll-off ghost options
+// ---------------------------------------------------------------------------
+
+test('renderProgressBarSvg draws a warning tick when warningRatio is set', () => {
+  const svg = renderProgressBarSvg(30, 100, 200, 10, { warningRatio: 0.8 });
+  // Tick sits at x = round(0.8 * 200) = 160
+  expect(svg).toContain('<line x1="160" y1="0" x2="160"');
+});
+
+test('renderProgressBarSvg adds a dashed outline when softReference is true', () => {
+  const svg = renderProgressBarSvg(30, 100, 200, 10, { softReference: true });
+  expect(svg).toContain('stroke-dasharray="2 3"');
+});
+
+test('renderProgressBarSvg suppresses warning tick and soft-reference outline at ratio >= 1.0', () => {
+  // At/over 100% the escalated Gold Deep fill is already the "past threshold"
+  // signal; the warning tick and dashed soft-reference rim just add noise.
+  // The overshoot reference tick (a separate `<line>` in Deep Black) is
+  // still expected, so we distinguish by stroke colour rather than element.
+  const overWithTick = renderProgressBarSvg(120, 100, 200, 10, { warningRatio: 0.8 });
+  expect(overWithTick).not.toMatch(/<line[^>]*stroke="#FFFFFF"/);
+
+  const overWithOutline = renderProgressBarSvg(150, 100, 200, 10, { softReference: true });
+  expect(overWithOutline).not.toContain('stroke-dasharray');
+
+  // Below threshold both overlays still render (regression guard for the ratio gate).
+  const underWithBoth = renderProgressBarSvg(30, 100, 200, 10, {
+    warningRatio: 0.8,
+    softReference: true,
+  });
+  expect(underWithBoth).toMatch(/<line[^>]*stroke="#FFFFFF"/);
+  expect(underWithBoth).toContain('stroke-dasharray');
+});
+
+test('renderProgressBarSvg draws a roll-off ghost slice at the leading edge', () => {
+  // used=50, limit=100, width=200 → fill width 100. Ghost = 20% of that = 20.
+  const svg = renderProgressBarSvg(50, 100, 200, 10, { rolloffRatio: 0.2 });
+  expect(svg).toMatch(/<rect x="0" y="0" width="20" height="10"[^>]*opacity="0\.32"/);
+});
+
+test('renderProgressBarSvg draws an overshoot reference tick at ratio > 1', () => {
+  // At ratio 10, log-scaled reference sits at width / (1 + log10(10)) = width/2.
+  // For width=200 that puts the ref tick at x=100.
+  const svg = renderProgressBarSvg(1000, 100, 200, 12);
+  expect(svg).toMatch(/<line x1="100" y1="1" x2="100" y2="11"/);
+  // And the overshoot region right of the tick is darkened.
+  expect(svg).toMatch(/<rect x="100" y="0" width="100" height="12"[^>]*fill="#0A0A0A"/);
+});
+
+test('renderProgressBarSvg omits overshoot tick when ratio is just barely over 1', () => {
+  // At ratio 1.01, log-scaled ref position is refX = round(width / 1.0043) ≈ 199.
+  // Since refX > width - 4, the tick is suppressed to avoid a marker glued to
+  // the right edge.
+  const svg = renderProgressBarSvg(101, 100, 200, 12);
+  expect(svg).not.toMatch(/<line x1="\d+" y1="1" x2=/);
 });

@@ -17,24 +17,50 @@ export interface Sample {
   cumulative: number;
 }
 
-// BRAINS-aligned palette.
-// Parent brand only — Trust Teal and Incubator Blue are sub-brand markers
-// and must not appear on the parent BRAINS lockup or its extensions.
-const COLOR_TRACK = '#252a31';
+// BRAINS-aligned palette (Brand Guidelines v1.0 §5 — parent brand only;
+// Trust Teal and Incubator Blue are sub-brand markers and must not appear
+// on the parent BRAINS lockup or its extensions). The escalation stays
+// inside the gold family — Gold Light → BRAINS Gold → Gold Deep — because
+// the brand has no primary red/alarm token; a hotter, denser gold reads
+// as "past the threshold" without violating palette compliance.
+const COLOR_TRACK = '#1A1A1A';      // Grey 900 — dark track ground
 const COLOR_LOW = '#FCD17A';        // Gold Light — soft fill, low usage
-const COLOR_WARN = '#FCC14D';       // BRAINS Gold — caution, near limit
-const COLOR_CRIT = '#E26B5A';       // Warm coral — alarm (≥ 100%)
-const COLOR_HIGHLIGHT = '#FFFFFF';  // Top sheen on the fill, low opacity
-const COLOR_SPARK = '#FCC14D';      // BRAINS Gold sparkline stroke
-const COLOR_BASELINE = '#3c3c3c';   // Subtle baseline guide
+const COLOR_WARN = '#FCC14D';       // BRAINS Gold — caution, near reference
+const COLOR_CRIT = '#D99518';       // Gold Deep — past reference (≥ 100%)
+const COLOR_HIGHLIGHT = '#FFFFFF';  // Pure White — top sheen, low opacity
+const COLOR_SHADOW = '#0A0A0A';     // Deep Black — bottom shadow, depth cue
+const COLOR_SPARK = '#FCC14D';      // BRAINS Gold — sparkline stroke
+const COLOR_BASELINE = '#3A3A3A';   // Grey 700 — baseline guide
+
+export interface ProgressBarOptions {
+  /**
+   * Optional warning tick position along the track, expressed as a ratio in
+   * (0, 1). Rendered as a thin vertical line so the user can see how close
+   * they are to the yellow band without a legend.
+   */
+  warningRatio?: number;
+  /**
+   * When true, the track is drawn with a subtle dashed outline to signal
+   * "this reference isn't a hard cap you configured". Used for the
+   * default-reference variant of the bar.
+   */
+  softReference?: boolean;
+  /**
+   * Optional ghost segment at the leading edge showing how many tokens are
+   * about to roll off (rolloffRatio in (0, 1] of the fill width). Rendered
+   * as a slightly darker slice at the *front* of the fill — visually reads
+   * as "this much of your usage will free up soon".
+   */
+  rolloffRatio?: number;
+}
 
 /**
  * Returns an SVG progress bar string.
  *
- * Color bands (BRAINS palette):
+ * Color bands (BRAINS palette — parent brand, gold family only):
  *   ratio < 0.8  => Gold Light  #FCD17A
  *   ratio < 1.0  => BRAINS Gold #FCC14D
- *   ratio >= 1.0 => Coral       #E26B5A
+ *   ratio >= 1.0 => Gold Deep   #D99518 (past-reference escalation)
  *
  * When used > 0 but the fill would round below MIN_FILL_PX, a MIN_FILL_PX
  * sliver is rendered instead so small percentages remain visible.
@@ -44,12 +70,21 @@ const COLOR_BASELINE = '#3c3c3c';   // Subtle baseline guide
  * visually distinct from any data-bearing state and reads as intentional
  * rather than broken (which the previous hatched-pattern fallback did not,
  * since inline-SVG <pattern>+url(#) refs are unreliable inside webviews).
+ *
+ * When `options.warningRatio` is set, a thin tick mark is drawn on the
+ * track at that ratio so the yellow-threshold boundary is visible even
+ * before the fill reaches it.
+ *
+ * When `options.softReference` is true the track carries a subtle dashed
+ * outline — used to differentiate "typical peak" (default) from a limit
+ * the user actually set.
  */
 export function renderProgressBarSvg(
   used: number,
   limit: number | null,
   width = 200,
   height = 10,
+  options: ProgressBarOptions = {},
 ): string {
   const MIN_FILL_PX = 3;
   const rx = Math.round(height / 2);
@@ -79,23 +114,104 @@ export function renderProgressBarSvg(
 
   let fillRect = '';
   let highlightRect = '';
+  let shadowRect = '';
+  let edgeCapRect = '';
+  let rolloffRect = '';
+  let overshootRefTick = '';
+  let overshootOverlay = '';
   if (fillWidth > 0) {
     fillRect = `<rect width="${fillWidth}" height="${height}" rx="${rx}" fill="${fillColor}"/>`;
-    // Subtle top sheen — gives the bar a little depth without needing gradients.
+    // Depth cues — top sheen + bottom shadow give the bar dimensionality
+    // without needing SVG gradients (which are unreliable inside webviews).
     if (fillWidth >= 4 && height >= 6) {
       const hlInset = 2;
-      const hlY = 1;
       const hlH = Math.max(1, Math.round(height / 6));
       const hlW = Math.max(1, fillWidth - hlInset * 2);
-      highlightRect = `<rect x="${hlInset}" y="${hlY}" width="${hlW}" height="${hlH}" rx="${Math.round(hlH / 2)}" fill="${COLOR_HIGHLIGHT}" opacity="0.22"/>`;
+      highlightRect =
+        `<rect x="${hlInset}" y="1" width="${hlW}" height="${hlH}" ` +
+        `rx="${Math.round(hlH / 2)}" fill="${COLOR_HIGHLIGHT}" opacity="0.22"/>`;
+      const shH = Math.max(1, Math.round(height / 7));
+      shadowRect =
+        `<rect x="${hlInset}" y="${height - shH - 1}" width="${hlW}" height="${shH}" ` +
+        `rx="${Math.round(shH / 2)}" fill="${COLOR_SHADOW}" opacity="0.18"/>`;
     }
+    // Leading-edge cap — a slim bright vertical accent at the fill's right
+    // edge so a fully-filled bar still reads as a shape with an end, not a
+    // flat block. Skipped for very short fills where it would dominate.
+    if (fillWidth >= 12 && height >= 6) {
+      const capW = 2;
+      edgeCapRect =
+        `<rect x="${fillWidth - capW}" y="1" width="${capW}" height="${height - 2}" ` +
+        `rx="1" fill="${COLOR_LOW}" opacity="0.7"/>`;
+    }
+    // Roll-off ghost — a darker slice at the leading edge of the fill.
+    if (
+      options.rolloffRatio !== undefined &&
+      options.rolloffRatio > 0 &&
+      options.rolloffRatio < 1
+    ) {
+      const ghostW = Math.max(2, Math.round(options.rolloffRatio * fillWidth));
+      rolloffRect =
+        `<rect x="0" y="0" width="${ghostW}" height="${height}" rx="${rx}" ` +
+        `fill="${COLOR_SHADOW}" opacity="0.32"/>`;
+    }
+    // Overshoot indicator — at ratio >= 1.0, the fill is clamped to the
+    // full width and the reference line would sit at the right edge, which
+    // is uninformative. Instead, place a Deep Black tick where the
+    // reference *would* sit on a log-scaled bar (1× at 1/(1+log10(ratio))
+    // of the width), and darken everything to the right of it. Result: the
+    // user sees "the light region is what would count as 100%; everything
+    // past the tick is how far you've overshot." Bar never saturates
+    // visually, even at 30–40× reference.
+    if (ratio >= 1.0) {
+      const scale = 1 + Math.log10(ratio);
+      const refX = Math.round(fillWidth / scale);
+      if (refX >= 4 && refX <= fillWidth - 4) {
+        overshootOverlay =
+          `<rect x="${refX}" y="0" width="${fillWidth - refX}" height="${height}" ` +
+          `rx="0" fill="${COLOR_SHADOW}" opacity="0.22"/>`;
+        overshootRefTick =
+          `<line x1="${refX}" y1="1" x2="${refX}" y2="${height - 1}" ` +
+          `stroke="${COLOR_SHADOW}" stroke-width="2" opacity="0.85"/>`;
+      }
+    }
+  }
+
+  // --- Warning tick ---
+  // Suppressed at ratio >= 1.0: the coral fill already reads as "past the
+  // warning threshold", so the tick just clutters the bar.
+  let warningTick = '';
+  const wr = options.warningRatio;
+  if (wr !== undefined && wr > 0 && wr < 1 && ratio < 1.0) {
+    const x = Math.round(wr * width);
+    warningTick =
+      `<line x1="${x}" y1="0" x2="${x}" y2="${height}" ` +
+      `stroke="${COLOR_HIGHLIGHT}" stroke-width="1" opacity="0.55"/>`;
+  }
+
+  // --- Soft-reference dashed outline ---
+  // Suppressed at ratio >= 1.0 for the same reason: with the bar fully
+  // saturated in coral, the dashed rim reads as noise, not signal.
+  let softOutline = '';
+  if (options.softReference === true && ratio < 1.0) {
+    softOutline =
+      `<rect x="0.5" y="0.5" width="${width - 1}" height="${height - 1}" ` +
+      `rx="${rx}" fill="none" stroke="${COLOR_HIGHLIGHT}" stroke-width="1" ` +
+      `stroke-dasharray="2 3" opacity="0.35"/>`;
   }
 
   return (
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
     trackRect +
     fillRect +
+    overshootOverlay +
+    rolloffRect +
+    shadowRect +
     highlightRect +
+    edgeCapRect +
+    overshootRefTick +
+    warningTick +
+    softOutline +
     `</svg>`
   );
 }

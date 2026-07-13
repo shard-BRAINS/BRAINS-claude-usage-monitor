@@ -1,7 +1,17 @@
 import * as vscode from 'vscode';
 import type { SessionTotals } from '../transcripts/types';
 import type { UnconfiguredBarStyle } from '../config/barStyle';
-import { commaFormat, relativeTime, countdownFormat, percentageLabel } from './formatters';
+import type { ReferenceSource } from '../config/limits';
+import type { ModelMixItem } from './modelMix';
+import {
+  commaFormat,
+  relativeTime,
+  countdownFormat,
+  rollingRowLabel,
+  durationLabel,
+  shortTokens,
+} from './formatters';
+import { formatModelMix } from './modelMix';
 import { renderUnconfiguredBar } from './barRenderer';
 import { renderSparklineSvg } from './svg';
 import type { Sample } from './svg';
@@ -29,13 +39,36 @@ export interface RollingDetail {
 export interface RollingSnapshot {
   windowLabel: string;
   used: number;
+  /** User-configured token limit for this window, or null when unset. */
   limit: number | null;
+  /**
+   * Effective denominator for the progress bar. Equals `limit` when
+   * configured; otherwise a soft "typical peak" default. Always populated.
+   */
+  reference: number;
+  /** Whether `reference` came from user config or the soft default. */
+  referenceSource: ReferenceSource;
   nextResetAt: number | undefined;
   /**
    * Optional per-window detail used when no token limit is configured.
    * When absent, the no-limit bar falls back to the static "no-plan rail".
    */
   detail?: RollingDetail;
+  /**
+   * Tokens that will fall out of the window in the next roll-off event.
+   * Rendered as a "ghost" slice on the leading edge of the bar so users
+   * can see relief coming. Undefined when no roll-off is imminent.
+   */
+  rolloffTokens?: number;
+  /** Effective burn-rate tokens/min contributing to this window, or 0. */
+  tokensPerMin?: number;
+  /**
+   * Milliseconds until `used` reaches `reference` at the current burn rate.
+   * Undefined when burn is zero or reference already exceeded.
+   */
+  projectedExhaustMs?: number;
+  /** Aggregated model mix inside the window; empty when no models known. */
+  modelMix?: ModelMixItem[];
 }
 
 export interface SessionListItem {
@@ -72,6 +105,28 @@ function sparklineImg(samples: Sample[]): string {
   return `<img src="${svgDataUri(renderSparklineSvg(samples))}">`;
 }
 
+function resetLabel(snapshot: RollingSnapshot, nowMs: number): string {
+  return snapshot.nextResetAt !== undefined
+    ? `Oldest rolls off in ${countdownFormat(snapshot.nextResetAt - nowMs)}`
+    : 'Oldest rolls off in —';
+}
+
+function burnRateLine(snapshot: RollingSnapshot): string {
+  const rate = snapshot.tokensPerMin;
+  if (rate === undefined || rate <= 0) return '';
+  const eta =
+    snapshot.projectedExhaustMs !== undefined
+      ? ` · hits ${shortTokens(snapshot.reference)} in ${durationLabel(snapshot.projectedExhaustMs)}`
+      : '';
+  return `Burn: ${shortTokens(Math.round(rate))} tok/min${eta}`;
+}
+
+function modelMixLine(snapshot: RollingSnapshot): string {
+  const mix = snapshot.modelMix;
+  if (mix === undefined || mix.length === 0) return '';
+  return `Models: ${formatModelMix(mix)}`;
+}
+
 // ---------------------------------------------------------------------------
 // renderHoverMarkdown
 // ---------------------------------------------------------------------------
@@ -85,27 +140,23 @@ export function renderHoverMarkdown(data: HoverCardData): vscode.MarkdownString 
   lines.push('');
 
   // --- Session window row ---
-  const sessionResetStr =
-    session.nextResetAt !== undefined
-      ? `Oldest rolls off in ${countdownFormat(session.nextResetAt - nowMs)}`
-      : 'Oldest rolls off in —';
-
   lines.push(
-    `**${session.windowLabel}**: ${commaFormat(session.used)} tokens · ${percentageLabel(session.used, session.limit)} · ${sessionResetStr}`,
+    `**${session.windowLabel}**: ${commaFormat(session.used)} tokens · ${rollingRowLabel(session.used, session.reference, session.referenceSource)} · ${resetLabel(session, nowMs)}`,
   );
   lines.push(rollingBarImg(session, barStyle));
+  const sessionBurnLine = burnRateLine(session);
+  if (sessionBurnLine !== '') lines.push(sessionBurnLine);
+  const sessionMixLine = modelMixLine(session);
+  if (sessionMixLine !== '') lines.push(sessionMixLine);
   lines.push('');
 
   // --- Weekly window row ---
-  const weeklyResetStr =
-    weekly.nextResetAt !== undefined
-      ? `Oldest rolls off in ${countdownFormat(weekly.nextResetAt - nowMs)}`
-      : 'Oldest rolls off in —';
-
   lines.push(
-    `**${weekly.windowLabel}**: ${commaFormat(weekly.used)} tokens · ${percentageLabel(weekly.used, weekly.limit)} · ${weeklyResetStr}`,
+    `**${weekly.windowLabel}**: ${commaFormat(weekly.used)} tokens · ${rollingRowLabel(weekly.used, weekly.reference, weekly.referenceSource)} · ${resetLabel(weekly, nowMs)}`,
   );
   lines.push(rollingBarImg(weekly, barStyle));
+  const weeklyBurnLine = burnRateLine(weekly);
+  if (weeklyBurnLine !== '') lines.push(weeklyBurnLine);
   lines.push('');
 
   // --- Last hour sparkline ---
