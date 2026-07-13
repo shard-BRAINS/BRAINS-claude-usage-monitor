@@ -47,7 +47,6 @@ package-output.txt
 SECURITY.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
-*.code-workspace
 
 # OS / editor cruft
 **/Thumbs.db
