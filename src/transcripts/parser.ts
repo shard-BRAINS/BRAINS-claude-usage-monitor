@@ -51,6 +51,11 @@ export function parseTranscriptLine(line: string): UsageRecord | null {
         ? (msg['id'] as string)
         : undefined;
 
+    const model =
+      typeof msg['model'] === 'string' && msg['model'].length > 0
+        ? (msg['model'] as string)
+        : undefined;
+
     const result: UsageRecord = {
       input: extractNumber(u['input_tokens']),
       output: extractNumber(u['output_tokens']),
@@ -63,6 +68,9 @@ export function parseTranscriptLine(line: string): UsageRecord | null {
     }
     if (messageId !== undefined) {
       result.messageId = messageId;
+    }
+    if (model !== undefined) {
+      result.model = model;
     }
 
     return result;

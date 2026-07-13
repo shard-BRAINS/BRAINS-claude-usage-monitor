@@ -71,14 +71,18 @@ async function aggregateFile(filePath: string, opts: AggregateOptions): Promise<
     last = record;
 
     if (opts.collectEntries && record.timestampMs !== undefined) {
-      entries.push({
+      const entry: TimelineEntry = {
         timestampMs: record.timestampMs,
         input: record.input,
         output: record.output,
         cacheCreate: record.cacheCreate,
         cacheRead: record.cacheRead,
         total: computeBillable(record.input, record.output, record.cacheCreate, record.cacheRead),
-      });
+      };
+      if (record.model !== undefined) {
+        entry.model = record.model;
+      }
+      entries.push(entry);
     }
   }
 

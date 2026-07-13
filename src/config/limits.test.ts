@@ -3,7 +3,13 @@ import { vi } from 'vitest';
 
 vi.mock('vscode', () => import('../ui/__mocks__/vscode'));
 
-import { getLimits, DEFAULT_LIMITS } from './limits';
+import {
+  getLimits,
+  DEFAULT_LIMITS,
+  resolveReference,
+  DEFAULT_REFERENCE_SESSION_TOKENS,
+  DEFAULT_REFERENCE_WEEKLY_TOKENS,
+} from './limits';
 import { __setConfig, __clearConfig } from '../ui/__mocks__/vscode';
 
 beforeEach(() => {
@@ -88,4 +94,27 @@ test('getLimits sessionTokens null does not blow up: returns null, not a number'
   // Simulate downstream: if null, percentage is "n/a" — no division
   const pct = result.sessionTokens !== null ? (1000 / result.sessionTokens) * 100 : null;
   expect(pct).toBeNull();
+});
+
+// ---------------------------------------------------------------------------
+// resolveReference
+// ---------------------------------------------------------------------------
+
+test('resolveReference returns configured value when a positive limit is set', () => {
+  expect(resolveReference(80_000, DEFAULT_REFERENCE_SESSION_TOKENS)).toEqual({
+    value: 80_000,
+    source: 'configured',
+  });
+});
+
+test('resolveReference falls back to default when limit is null', () => {
+  expect(resolveReference(null, DEFAULT_REFERENCE_WEEKLY_TOKENS)).toEqual({
+    value: DEFAULT_REFERENCE_WEEKLY_TOKENS,
+    source: 'default',
+  });
+});
+
+test('resolveReference falls back to default when limit is zero or negative', () => {
+  expect(resolveReference(0, 100).source).toBe('default');
+  expect(resolveReference(-5, 100).source).toBe('default');
 });

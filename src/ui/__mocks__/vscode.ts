@@ -17,13 +17,33 @@ export enum ConfigurationTarget {
 // ---------------------------------------------------------------------------
 
 export class Uri {
+  readonly scheme: string = 'file';
+  readonly authority: string = '';
+  readonly path: string;
+  readonly query: string = '';
+  readonly fragment: string = '';
   readonly fsPath: string;
   private constructor(fsPath: string) {
     this.fsPath = fsPath;
+    this.path = fsPath;
   }
 
   toString(): string {
     return this.fsPath;
+  }
+
+  toJSON(): unknown {
+    return { scheme: this.scheme, path: this.path, fsPath: this.fsPath };
+  }
+
+  with(_change: {
+    scheme?: string;
+    authority?: string;
+    path?: string;
+    query?: string;
+    fragment?: string;
+  }): Uri {
+    return new Uri(this.fsPath);
   }
 
   static file(p: string): Uri {
@@ -211,12 +231,16 @@ export const workspace = {
 // ---------------------------------------------------------------------------
 
 export function makeFakeMemento(): {
+  keys(): readonly string[];
   get<T>(key: string, defaultValue: T): T;
   update(key: string, value: unknown): Thenable<void>;
   __snapshot(): Record<string, unknown>;
 } {
   const store = new Map<string, unknown>();
   return {
+    keys(): readonly string[] {
+      return Array.from(store.keys());
+    },
     get<T>(key: string, defaultValue: T): T {
       return store.has(key) ? (store.get(key) as T) : defaultValue;
     },

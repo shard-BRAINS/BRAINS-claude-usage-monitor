@@ -1,10 +1,15 @@
 import * as vscode from 'vscode';
 
-export type UnconfiguredBarStyle = 'sparkline' | 'heatmap' | 'dual-band';
+export type UnconfiguredBarStyle =
+  | 'progress'
+  | 'sparkline'
+  | 'heatmap'
+  | 'dual-band';
 
-export const DEFAULT_UNCONFIGURED_BAR_STYLE: UnconfiguredBarStyle = 'heatmap';
+export const DEFAULT_UNCONFIGURED_BAR_STYLE: UnconfiguredBarStyle = 'progress';
 
 const VALID: ReadonlySet<UnconfiguredBarStyle> = new Set([
+  'progress',
   'sparkline',
   'heatmap',
   'dual-band',
@@ -13,8 +18,11 @@ const VALID: ReadonlySet<UnconfiguredBarStyle> = new Set([
 /**
  * How to render the Session (5h) / Weekly (7d) bars when no token limit is
  * configured (i.e. `limits.sessionTokens` / `limits.weeklyTokens` is null).
- * When a numeric limit IS configured the bar is always a standard progress
- * bar — this setting only governs the no-limit fallback.
+ *
+ *  - progress  (default): treat a soft "typical peak" as the denominator and
+ *                         draw a normal progress bar with a dashed outline.
+ *  - sparkline / heatmap / dual-band: legacy no-denominator visualisations
+ *                                     retained for users who prefer them.
  */
 export function getUnconfiguredBarStyle(): UnconfiguredBarStyle {
   const cfg = vscode.workspace.getConfiguration('claudeUsageMonitor');

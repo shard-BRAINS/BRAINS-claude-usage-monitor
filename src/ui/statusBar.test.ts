@@ -33,12 +33,16 @@ function makeMinimalHoverData(sessionUsed = 0, sessionLimit: number | null = nul
     windowLabel: 'Session (5h)',
     used: sessionUsed,
     limit: sessionLimit,
+    reference: sessionLimit ?? 220_000,
+    referenceSource: sessionLimit !== null ? 'configured' : 'default',
     nextResetAt: undefined,
   };
   const weekly: RollingSnapshot = {
     windowLabel: 'Weekly (7d)',
     used: 0,
     limit: null,
+    reference: 1_540_000,
+    referenceSource: 'default',
     nextResetAt: undefined,
   };
   const allSessions: SessionListItem[] = [];

@@ -5,14 +5,21 @@ import { pathToProjectSlug } from './transcripts/slug';
 import { createStatusBar } from './ui/statusBar';
 import { UsageSidebarProvider } from './ui/sidebarView';
 import { getThresholds } from './config/thresholds';
-import { getLimits } from './config/limits';
+import {
+  getLimits,
+  resolveReference,
+  DEFAULT_REFERENCE_SESSION_TOKENS,
+  DEFAULT_REFERENCE_WEEKLY_TOKENS,
+} from './config/limits';
 import { getRefreshIntervalSeconds } from './config/refresh';
 import { getNudgeConfig, addSuppressedSession } from './config/nudge';
 import { getUnconfiguredBarStyle } from './config/barStyle';
 import { maybeNudge, makeWorkspaceStateNudgeState } from './ui/nudge';
 import { listAllSessions, tokensInWindow, nextResetAt } from './transcripts/rolling';
 import { defaultProjectsDir } from './transcripts/paths';
-import type { HoverCardData, RollingDetail, SessionListItem } from './ui/hoverCard';
+import { computeBurnRate, projectExhaustMs } from './ui/burnRate';
+import { computeModelMix } from './ui/modelMix';
+import type { HoverCardData, RollingDetail, RollingSnapshot, SessionListItem } from './ui/hoverCard';
 import type { Sample } from './ui/svg';
 import type { SessionTotals, SessionTimeline } from './transcripts/types';
 
@@ -99,6 +106,28 @@ function buildSparkline(timelines: SessionTimeline[], nowMs: number): Sample[] {
 }
 
 /**
+ * Sum of entry.total whose age has exceeded 90% of the window — i.e. tokens
+ * that will roll off in the next 10% of the window. Rendered as a "ghost"
+ * segment on the leading (oldest) edge of the progress bar so users can see
+ * relief coming.
+ */
+function rolloffTokensIn(
+  timelines: SessionTimeline[],
+  windowMs: number,
+  nowMs: number,
+): number {
+  const rolloffThreshold = windowMs * 0.9;
+  let total = 0;
+  for (const t of timelines) {
+    for (const e of t.entries) {
+      const age = nowMs - e.timestampMs;
+      if (age >= rolloffThreshold && age <= windowMs) total += e.total;
+    }
+  }
+  return total;
+}
+
+/**
  * Compute the per-window detail used by the no-limit fallback renderers:
  *
  *  - `buckets`: oldest-first bucketed token totals for the heatmap tiles.
@@ -178,22 +207,46 @@ export function activate(context: vscode.ExtensionContext): void {
     const sessionBuckets = Math.max(1, limits.sessionWindowHours * 4);
     const weeklyBuckets = Math.max(1, limits.weeklyWindowDays);
 
+    const sessionRef = resolveReference(limits.sessionTokens, DEFAULT_REFERENCE_SESSION_TOKENS);
+    const weeklyRef = resolveReference(limits.weeklyTokens, DEFAULT_REFERENCE_WEEKLY_TOKENS);
+
+    const burn = computeBurnRate(timelines, now);
+
+    const sessionUsed = tokensInWindow(timelines, sessionMs, now);
+    const weeklyUsed = tokensInWindow(timelines, weeklyMs, now);
+
+    const session: RollingSnapshot = {
+      windowLabel: `Session (${limits.sessionWindowHours}h)`,
+      used: sessionUsed,
+      limit: limits.sessionTokens,
+      reference: sessionRef.value,
+      referenceSource: sessionRef.source,
+      nextResetAt: nextResetAt(timelines, sessionMs, now),
+      detail: buildWindowDetail(timelines, sessionMs, sessionBuckets, now),
+      rolloffTokens: rolloffTokensIn(timelines, sessionMs, now),
+      tokensPerMin: burn.tokensPerMin,
+      projectedExhaustMs: projectExhaustMs(sessionUsed, sessionRef.value, burn.tokensPerMin),
+      modelMix: computeModelMix(timelines, sessionMs, now),
+    };
+
+    const weekly: RollingSnapshot = {
+      windowLabel: `Weekly (${limits.weeklyWindowDays}d)`,
+      used: weeklyUsed,
+      limit: limits.weeklyTokens,
+      reference: weeklyRef.value,
+      referenceSource: weeklyRef.source,
+      nextResetAt: nextResetAt(timelines, weeklyMs, now),
+      detail: buildWindowDetail(timelines, weeklyMs, weeklyBuckets, now),
+      rolloffTokens: rolloffTokensIn(timelines, weeklyMs, now),
+      tokensPerMin: burn.tokensPerMin,
+      projectedExhaustMs: projectExhaustMs(weeklyUsed, weeklyRef.value, burn.tokensPerMin),
+      modelMix: computeModelMix(timelines, weeklyMs, now),
+    };
+
     return {
       nowMs: now,
-      session: {
-        windowLabel: `Session (${limits.sessionWindowHours}h)`,
-        used: tokensInWindow(timelines, sessionMs, now),
-        limit: limits.sessionTokens,
-        nextResetAt: nextResetAt(timelines, sessionMs, now),
-        detail: buildWindowDetail(timelines, sessionMs, sessionBuckets, now),
-      },
-      weekly: {
-        windowLabel: `Weekly (${limits.weeklyWindowDays}d)`,
-        used: tokensInWindow(timelines, weeklyMs, now),
-        limit: limits.weeklyTokens,
-        nextResetAt: nextResetAt(timelines, weeklyMs, now),
-        detail: buildWindowDetail(timelines, weeklyMs, weeklyBuckets, now),
-      },
+      session,
+      weekly,
       thisWindow: latestScopedTotals,
       allSessions,
       sparkline: buildSparkline(timelines, now),
@@ -205,8 +258,22 @@ export function activate(context: vscode.ExtensionContext): void {
   // We maintain a cached snapshot and refresh it on each watcher change.
   let cachedHoverData: HoverCardData = {
     nowMs: Date.now(),
-    session: { windowLabel: 'Session (5h)', used: 0, limit: null, nextResetAt: undefined },
-    weekly: { windowLabel: 'Weekly (7d)', used: 0, limit: null, nextResetAt: undefined },
+    session: {
+      windowLabel: 'Session (5h)',
+      used: 0,
+      limit: null,
+      reference: DEFAULT_REFERENCE_SESSION_TOKENS,
+      referenceSource: 'default',
+      nextResetAt: undefined,
+    },
+    weekly: {
+      windowLabel: 'Weekly (7d)',
+      used: 0,
+      limit: null,
+      reference: DEFAULT_REFERENCE_WEEKLY_TOKENS,
+      referenceSource: 'default',
+      nextResetAt: undefined,
+    },
     thisWindow: undefined,
     allSessions: [],
   };
